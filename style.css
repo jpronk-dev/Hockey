@@ -1689,3 +1689,246 @@ body.admin-mode .player[data-player-id],
 body.admin-mode .sub-player[data-player-id] {
     touch-action: none;
 }
+
+/* ========== RESPONSIVE: KLEINE TELEFOONS ========== */
+@media (max-width: 374px) {
+    /* Veldspelers */
+    .player {
+        min-width: 56px;
+    }
+
+    .player-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 11px;
+    }
+
+    .player-label {
+        padding: 2px 5px;
+        max-width: 64px;
+    }
+
+    .player-number,
+    .player-name {
+        font-size: 9px;
+    }
+
+    .player-empty {
+        width: 40px;
+        height: 40px;
+    }
+
+    .players {
+        padding: 16px 4px;
+    }
+
+    /* Podium */
+    .podium-place {
+        width: 80px;
+    }
+
+    .avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 0.9rem;
+    }
+
+    .podium-place.first .avatar {
+        width: 62px;
+        height: 62px;
+        font-size: 1.2rem;
+    }
+
+    .podium-place.first .podium-block {
+        height: 65px;
+        font-size: 1.6rem;
+    }
+
+    .podium-place.second .podium-block {
+        height: 48px;
+    }
+
+    .podium-place.third .podium-block {
+        height: 34px;
+    }
+
+    .podium-name {
+        font-size: 0.78rem;
+    }
+
+    .podium-stat {
+        font-size: 0.72rem;
+    }
+
+    /* Stand tabel */
+    .stand-col {
+        width: 26px;
+        font-size: 11px;
+    }
+
+    .stand-header {
+        padding: 10px 10px;
+        font-size: 10px;
+    }
+
+    .stand-row {
+        padding: 10px;
+    }
+
+    .stand-team {
+        font-size: 12px;
+    }
+
+    .stand-pos {
+        font-size: 12px;
+    }
+
+    /* Tab navigatie */
+    .tab-nav .tab {
+        padding: 12px 12px;
+        font-size: 11px;
+    }
+
+    /* Container */
+    .container {
+        padding: 0 10px 80px;
+    }
+
+    /* Uitslagen */
+    .uitslag-score {
+        min-width: 40px;
+        font-size: 13px;
+    }
+
+    .uitslag-team {
+        font-size: 12px;
+    }
+}
+
+/* ========== RESPONSIVE: TABLETS ========== */
+@media (min-width: 768px) {
+    /* Container */
+    .container {
+        max-width: 700px;
+    }
+
+    /* Podium */
+    .podium {
+        gap: 16px;
+        padding: 28px 0 36px;
+    }
+
+    .podium-place {
+        width: 120px;
+    }
+
+    .avatar {
+        width: 66px;
+        height: 66px;
+        font-size: 1.2rem;
+    }
+
+    .podium-place.first .avatar {
+        width: 86px;
+        height: 86px;
+        font-size: 1.7rem;
+    }
+
+    .podium-place.first .podium-block {
+        height: 90px;
+    }
+
+    .podium-place.second .podium-block {
+        height: 66px;
+    }
+
+    .podium-place.third .podium-block {
+        height: 48px;
+    }
+
+    .podium-name {
+        font-size: 0.95rem;
+    }
+
+    /* Stand tabel */
+    .stand-col {
+        width: 40px;
+        font-size: 13px;
+    }
+
+    .stand-header {
+        padding: 14px 18px;
+    }
+
+    .stand-row {
+        padding: 16px 18px;
+    }
+
+    .stand-team {
+        font-size: 14px;
+    }
+
+    /* Uitslagen */
+    .uitslag-row {
+        padding: 14px 18px;
+    }
+
+    .uitslag-team {
+        font-size: 14px;
+    }
+
+    .uitslag-score {
+        min-width: 60px;
+        font-size: 15px;
+    }
+
+    /* Match card */
+    .match-card {
+        padding: 28px;
+    }
+
+    .match-teams {
+        gap: 24px;
+    }
+
+    .match-team {
+        width: 120px;
+    }
+
+    .team-badge,
+    .team-badge-placeholder {
+        width: 64px;
+        height: 64px;
+    }
+
+    /* Modals */
+    .modal-card {
+        max-width: 400px;
+    }
+
+    .login-card {
+        max-width: 380px;
+    }
+
+    /* Leaderboard */
+    .list-item {
+        padding: 12px 20px;
+    }
+}
+
+/* ========== RESPONSIVE: GROTE SCHERMEN ========== */
+@media (min-width: 1024px) {
+    /* Container */
+    .container {
+        max-width: 800px;
+    }
+
+    /* Tab navigatie gecentreerd */
+    .tab-nav {
+        justify-content: center;
+    }
+
+    .tab-nav .tab {
+        padding: 14px 24px;
+    }
+}
