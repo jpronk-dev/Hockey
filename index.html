@@ -74,9 +74,10 @@
                 <!-- Match content -->
                 <div class="match-content" id="matchContent">
                     <div class="match-date" id="matchDate"></div>
+                    <div class="match-home-away" id="matchHomeAway"></div>
                     <div class="match-teams">
                         <div class="match-team home">
-                            <img src="logo.svg" alt="Terriers" class="team-badge">
+                            <img src="logos/Terriers.webp" alt="Terriers" class="team-badge">
                             <span class="team-name">Terriers JH1</span>
                         </div>
                         <div class="match-vs">vs</div>
@@ -87,12 +88,12 @@
                             <span class="team-name" id="awayTeam"></span>
                         </div>
                     </div>
-                    <div class="match-info">
-                        <div class="match-info-item">
+                    <div class="match-info" id="matchInfo" style="display:none">
+                        <div class="match-info-item" id="matchTimeItem">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                             <span><strong id="matchTime"></strong> aanvang</span>
                         </div>
-                        <div class="match-info-item">
+                        <div class="match-info-item" id="gatherTimeItem">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
                             <span>Verzamelen <strong id="gatherTime"></strong></span>
                         </div>

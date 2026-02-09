@@ -86,19 +86,32 @@ function savePlayersData() {
     localStorage.setItem('hockeyPlayers', JSON.stringify(players));
 }
 
-// ===== WEDSTRIJD DATA =====
-const defaultMatch = {
-    date: '',
-    awayTeam: '',
-    awayLogo: '',
-    matchTime: '',
-    gatherTime: ''
-};
+// ===== WEDSTRIJDSCHEMA =====
+const schedule = [
+    { date: '2026-03-08', opponent: 'Pinoké HO25-2',    home: true,  logo: 'logos/Pinoke.jpeg' },
+    { date: '2026-03-15', opponent: 'Amsterdam HO25-5',  home: false, logo: 'logos/Amsterdam.png' },
+    { date: '2026-03-22', opponent: 'Hoorn HO25-1-O',    home: true,  logo: 'logos/Hoorn.webp' },
+    { date: '2026-03-29', opponent: 'Reigers HO25-1',    home: true,  logo: 'logos/Reigers.webp' },
+    { date: '2026-04-12', opponent: 'Kraaien HO25-1',    home: false, logo: 'logos/Kraaien.png' },
+    { date: '2026-04-19', opponent: 'Pinoké HO25-2',     home: false, logo: 'logos/Pinoke.jpeg' },
+    { date: '2026-05-10', opponent: 'Amsterdam HO25-5',  home: true,  logo: 'logos/Amsterdam.png' },
+    { date: '2026-05-17', opponent: 'Hoorn HO25-1-O',    home: false, logo: 'logos/Hoorn.webp' },
+    { date: '2026-05-31', opponent: 'Reigers HO25-1',    home: false, logo: 'logos/Reigers.webp' },
+    { date: '2026-06-07', opponent: 'Kraaien HO25-1',    home: true,  logo: 'logos/Kraaien.png' }
+];
 
-let matchData = safeJsonParse('hockeyMatch', { ...defaultMatch });
+function getNextMatch() {
+    const today = new Date().toISOString().slice(0, 10);
+    return schedule.find(m => m.date >= today) || null;
+}
 
-function saveMatchData() {
-    localStorage.setItem('hockeyMatch', JSON.stringify(matchData));
+// Admin-ingestelde tijden per wedstrijddatum
+function getMatchTimes(date) {
+    return safeJsonParse('hockeyMatchTimes_' + date, { matchTime: '', gatherTime: '', awayLogo: '' });
+}
+
+function saveMatchTimes(date, times) {
+    localStorage.setItem('hockeyMatchTimes_' + date, JSON.stringify(times));
 }
 
 function formatDate(dateStr) {
@@ -113,30 +126,47 @@ function renderMatch() {
     const emptyState = document.getElementById('matchEmpty');
     const matchContent = document.getElementById('matchContent');
 
-    const hasMatch = matchData.date && matchData.awayTeam;
+    const nextMatch = getNextMatch();
 
-    if (!hasMatch) {
+    if (!nextMatch) {
         if (emptyState) emptyState.style.display = 'block';
         if (matchContent) matchContent.style.display = 'none';
     } else {
         if (emptyState) emptyState.style.display = 'none';
         if (matchContent) matchContent.style.display = 'block';
 
+        const times = getMatchTimes(nextMatch.date);
+        const homeAway = nextMatch.home ? 'Thuis' : 'Uit';
+
         const matchDateEl = document.getElementById('matchDate');
         const awayTeamEl = document.getElementById('awayTeam');
         const matchTimeEl = document.getElementById('matchTime');
         const gatherTimeEl = document.getElementById('gatherTime');
 
-        if (matchDateEl) matchDateEl.textContent = formatDate(matchData.date);
-        if (awayTeamEl) awayTeamEl.textContent = matchData.awayTeam;
-        if (matchTimeEl) matchTimeEl.textContent = matchData.matchTime || '--:--';
-        if (gatherTimeEl) gatherTimeEl.textContent = matchData.gatherTime || '--:--';
+        const matchHomeAwayEl = document.getElementById('matchHomeAway');
+
+        if (matchDateEl) matchDateEl.textContent = formatDate(nextMatch.date);
+        if (matchHomeAwayEl) matchHomeAwayEl.textContent = homeAway;
+        if (awayTeamEl) awayTeamEl.textContent = nextMatch.opponent;
+        const matchInfoEl = document.getElementById('matchInfo');
+        const matchTimeItemEl = document.getElementById('matchTimeItem');
+        const gatherTimeItemEl = document.getElementById('gatherTimeItem');
+
+        const hasMatchTime = !!times.matchTime;
+        const hasGatherTime = !!times.gatherTime;
+
+        if (matchInfoEl) matchInfoEl.style.display = (hasMatchTime || hasGatherTime) ? '' : 'none';
+        if (matchTimeItemEl) matchTimeItemEl.style.display = hasMatchTime ? '' : 'none';
+        if (gatherTimeItemEl) gatherTimeItemEl.style.display = hasGatherTime ? '' : 'none';
+
+        if (matchTimeEl && hasMatchTime) matchTimeEl.textContent = times.matchTime;
+        if (gatherTimeEl && hasGatherTime) gatherTimeEl.textContent = times.gatherTime;
 
         const awayBadgeWrapper = document.getElementById('awayBadge');
         if (awayBadgeWrapper) {
-            if (matchData.awayLogo && isValidUrl(matchData.awayLogo)) {
-                const logoUrl = escapeHtml(matchData.awayLogo);
-                const teamName = escapeHtml(matchData.awayTeam);
+            if (nextMatch.logo) {
+                const logoUrl = escapeHtml(nextMatch.logo);
+                const teamName = escapeHtml(nextMatch.opponent);
                 awayBadgeWrapper.innerHTML = `<img src="${logoUrl}" alt="${teamName}" class="team-badge" onerror="this.parentElement.innerHTML='<div class=\\'team-badge team-badge-placeholder\\'>?</div>'">`;
             } else {
                 awayBadgeWrapper.innerHTML = `<div class="team-badge team-badge-placeholder">?</div>`;
@@ -151,11 +181,18 @@ function renderMatch() {
 }
 
 function openMatchModal() {
-    document.getElementById('editMatchDate').value = matchData.date;
-    document.getElementById('editAwayTeam').value = matchData.awayTeam;
-    document.getElementById('editAwayLogo').value = matchData.awayLogo || '';
-    document.getElementById('editMatchTime').value = matchData.matchTime;
-    document.getElementById('editGatherTime').value = matchData.gatherTime;
+    const nextMatch = getNextMatch();
+    if (!nextMatch) return;
+
+    const times = getMatchTimes(nextMatch.date);
+
+    document.getElementById('editMatchDate').value = nextMatch.date;
+    document.getElementById('editMatchDate').disabled = true;
+    document.getElementById('editAwayTeam').value = nextMatch.opponent;
+    document.getElementById('editAwayTeam').disabled = true;
+    document.getElementById('editAwayLogo').value = times.awayLogo || '';
+    document.getElementById('editMatchTime').value = times.matchTime;
+    document.getElementById('editGatherTime').value = times.gatherTime;
     document.getElementById('matchModal').classList.add('show');
 }
 
@@ -164,18 +201,21 @@ function closeMatchModal() {
 }
 
 function saveMatch() {
+    const nextMatch = getNextMatch();
+    if (!nextMatch) return;
+
     const logoUrl = document.getElementById('editAwayLogo').value.trim();
     if (logoUrl && !isValidUrl(logoUrl)) {
         alert('Ongeldige logo URL');
         return;
     }
 
-    matchData.date = document.getElementById('editMatchDate').value;
-    matchData.awayTeam = document.getElementById('editAwayTeam').value.trim() || 'Tegenstander';
-    matchData.awayLogo = logoUrl;
-    matchData.matchTime = document.getElementById('editMatchTime').value;
-    matchData.gatherTime = document.getElementById('editGatherTime').value;
-    saveMatchData();
+    const times = {
+        matchTime: document.getElementById('editMatchTime').value,
+        gatherTime: document.getElementById('editGatherTime').value,
+        awayLogo: logoUrl
+    };
+    saveMatchTimes(nextMatch.date, times);
     renderMatch();
     closeMatchModal();
 }

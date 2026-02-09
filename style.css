@@ -300,7 +300,26 @@ body.admin-mode .match-empty span {
     color: #666;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 16px;
+    margin-bottom: 2px;
+}
+
+.match-home-away {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    background: #f0f0f0;
+    padding: 2px 12px;
+    border-radius: 12px;
+    margin: 4px auto 16px;
+    text-align: center;
+}
+
+.match-date + .match-home-away {
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .match-teams {
