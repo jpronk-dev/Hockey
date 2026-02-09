@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HO25-1 - To Do</title>
+    <link rel="stylesheet" href="todo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p class="subtitle">HO25-1</p>
+            <h1>To Do</h1>
+        </header>
+
+        <!-- Taak toevoegen -->
+        <div class="add-task">
+            <input type="text" id="taskInput" placeholder="Nieuwe taak...">
+            <button onclick="addTask()">+</button>
+        </div>
+
+        <!-- Taken lijst -->
+        <div class="task-list" id="taskList"></div>
+
+        <!-- Voltooide taken -->
+        <div class="completed-section">
+            <button class="toggle-completed" onclick="toggleCompleted()">
+                <span id="completedCount">0</span> voltooid
+                <span class="arrow" id="arrow">▼</span>
+            </button>
+            <div class="completed-list" id="completedList"></div>
+        </div>
+
+        <!-- Links -->
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Leaderboard</a>
+            <a href="lineup.html" class="nav-link">Opstelling</a>
+        </div>
+    </div>
+
+    <script src="todo.js"></script>
+</body>
+</html>

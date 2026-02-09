@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HO25-1 Opstelling</title>
+    <link rel="stylesheet" href="lineup.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p class="subtitle">HO25-1</p>
+            <h1>Opstelling</h1>
+            <span class="formation">3-4-3</span>
+        </header>
+
+        <!-- Hockey veld -->
+        <div class="field">
+            <!-- Veld lijnen -->
+            <div class="field-lines">
+                <div class="center-line"></div>
+                <div class="penalty-area penalty-top"></div>
+                <div class="penalty-area penalty-bottom"></div>
+                <div class="goal-area goal-top"></div>
+                <div class="goal-area goal-bottom"></div>
+                <div class="center-circle"></div>
+            </div>
+
+            <!-- Spelers -->
+            <div class="players">
+                <!-- Aanval (3) -->
+                <div class="player-row attack">
+                    <div class="player" data-position="lw"></div>
+                    <div class="player" data-position="cf"></div>
+                    <div class="player" data-position="rw"></div>
+                </div>
+
+                <!-- Middenveld (4) -->
+                <div class="player-row midfield">
+                    <div class="player" data-position="lm"></div>
+                    <div class="player" data-position="lcm"></div>
+                    <div class="player" data-position="rcm"></div>
+                    <div class="player" data-position="rm"></div>
+                </div>
+
+                <!-- Verdediging (3) -->
+                <div class="player-row defense">
+                    <div class="player" data-position="lb"></div>
+                    <div class="player" data-position="cb"></div>
+                    <div class="player" data-position="rb"></div>
+                </div>
+
+                <!-- Keeper (1) -->
+                <div class="player-row goalkeeper">
+                    <div class="player" data-position="gk"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wissels -->
+        <div class="substitutes">
+            <h3>Wissels</h3>
+            <div class="subs-list" id="subsList"></div>
+        </div>
+
+        <!-- Links -->
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Leaderboard</a>
+            <a href="admin.html" class="nav-link">Beheren</a>
+        </div>
+    </div>
+
+    <script src="lineup.js"></script>
+</body>
+</html>
