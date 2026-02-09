@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terriers JH1</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="apple-touch-icon-167x167.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="favicon-128x128.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="favicon-196x196.png">
+    <meta name="msapplication-TileImage" content="mstile-144x144.png">
+    <meta name="msapplication-TileColor" content="#1a2332">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -36,7 +53,6 @@
     <nav class="tab-nav">
         <button class="tab active" data-tab="wedstrijd">Wedstrijd</button>
         <button class="tab" data-tab="ranglijst">Ranglijst</button>
-        <button class="tab" data-tab="competitie">Competitie</button>
         <button class="tab" data-tab="diensten">Diensten</button>
         <button class="tab admin-tab" data-tab="selectie" id="selectieTab" style="display:none">Selectie</button>
     </nav>
@@ -191,7 +207,7 @@
         <section class="tab-content" id="tab-ranglijst">
             <div class="segment-control">
                 <button class="segment active" data-stat="goals">Doelpunten</button>
-                <button class="segment" data-stat="matches">Wedstrijden</button>
+                <button class="segment" data-stat="assists">Assists</button>
             </div>
 
             <h2 class="section-title" id="pageTitle">Topscorers</h2>
@@ -204,6 +220,7 @@
                     <div class="podium-stat" id="stat2"></div>
                 </div>
                 <div class="podium-place first">
+                    <svg class="crown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
                     <div class="avatar" id="avatar1"></div>
                     <div class="podium-block">1</div>
                     <div class="podium-name" id="name1"></div>
@@ -218,35 +235,6 @@
             </div>
 
             <div class="leaderboard-list" id="leaderboardList"></div>
-        </section>
-
-        <!-- TAB: Competitie -->
-        <section class="tab-content" id="tab-competitie">
-            <div class="segment-control">
-                <button class="segment active" data-comp="stand">Stand</button>
-                <button class="segment" data-comp="uitslagen">Uitslagen</button>
-            </div>
-
-            <!-- Stand view -->
-            <div class="comp-view active" id="comp-stand">
-                <div class="stand-table">
-                    <div class="stand-header">
-                        <span class="stand-team-header">Teams</span>
-                        <span class="stand-col">#</span>
-                        <span class="stand-col">P</span>
-                        <span class="stand-col">W</span>
-                        <span class="stand-col">G</span>
-                        <span class="stand-col">V</span>
-                        <span class="stand-col">+/-</span>
-                    </div>
-                    <div id="standList"></div>
-                </div>
-            </div>
-
-            <!-- Uitslagen view -->
-            <div class="comp-view" id="comp-uitslagen">
-                <div id="uitslagenList"></div>
-            </div>
         </section>
 
         <!-- TAB: Diensten -->

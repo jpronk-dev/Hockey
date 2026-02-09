@@ -1,29 +1,83 @@
+// ===== HELPERS =====
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function isValidUrl(str) {
+    if (!str) return true;
+    try {
+        const url = new URL(str, window.location.origin);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
+function safeJsonParse(key, fallback) {
+    try {
+        const data = localStorage.getItem(key);
+        if (data === null) return fallback;
+        return JSON.parse(data);
+    } catch {
+        return fallback;
+    }
+}
+
+function getInitials(name) {
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+}
+
+function getFirstName(name) {
+    return name.split(' ')[0];
+}
+
+function renderAvatar(player, cssClass) {
+    const initials = escapeHtml(getInitials(player.name));
+    const name = escapeHtml(player.name);
+    if (player.photo && isValidUrl(player.photo)) {
+        const photo = escapeHtml(player.photo);
+        return `<div class="${cssClass}">`
+            + `<img src="${photo}" alt="${name}" onerror="this.style.display='none'; this.parentElement.textContent='${initials}'">`
+            + `</div>`;
+    }
+    return `<div class="${cssClass}">${initials}</div>`;
+}
+
+function renderAvatarInner(player) {
+    const initials = escapeHtml(getInitials(player.name));
+    const name = escapeHtml(player.name);
+    if (player.photo && isValidUrl(player.photo)) {
+        const photo = escapeHtml(player.photo);
+        return `<img src="${photo}" alt="${name}" onerror="this.style.display='none'; this.parentElement.textContent='${initials}'">`;
+    }
+    return initials;
+}
+
 // ===== SPELERS DATA =====
-// Nummer/Naam/Goals/Diensten uit teamlijst
 const defaultPlayers = [
-    { id: 1,  nummer: 1,  name: 'Floris',              goals: 1, matches: 0, diensten: 2, photo: 'photos/floris.jpg' },
-    { id: 2,  nummer: 2,  name: 'Bas van Neer',        goals: 0, matches: 0, diensten: 0, photo: 'photos/bas-van-neer.jpg' },
-    { id: 3,  nummer: 3,  name: 'Daan Loose',          goals: 1, matches: 0, diensten: 1, photo: 'photos/daan-loose.jpg' },
-    { id: 4,  nummer: 4,  name: 'Willem van Diemen',   goals: 3, matches: 0, diensten: 3, photo: 'photos/willem-van-diemen.jpg' },
-    { id: 5,  nummer: 6,  name: 'Jord Roest',          goals: 5, matches: 0, diensten: 1, photo: 'photos/jord-roest.jpg' },
-    { id: 6,  nummer: 7,  name: 'Wout',                goals: 0, matches: 0, diensten: 1, photo: 'photos/wout.jpg' },
-    { id: 7,  nummer: 8,  name: 'Dirk Swart',          goals: 2, matches: 0, diensten: 2, photo: 'photos/dirk-swart.jpg' },
-    { id: 8,  nummer: 9,  name: 'Stein Visser',        goals: 0, matches: 0, diensten: 1, photo: 'photos/stein-visser.jpg' },
-    { id: 9,  nummer: 10, name: 'Joris Kortenaar',     goals: 2, matches: 0, diensten: 1, photo: 'photos/joris-kortenaar.jpg' },
-    { id: 10, nummer: 11, name: 'Pim van der Moolen',  goals: 2, matches: 0, diensten: 0, photo: 'photos/pim-van-der-moolen.jpg' },
-    { id: 11, nummer: 12, name: 'Jay Schoppink',       goals: 1, matches: 0, diensten: 2, photo: 'photos/jay-schoppink.jpg' },
-    { id: 12, nummer: 14, name: 'Hylke van der Wal',   goals: 0, matches: 0, diensten: 0, photo: 'photos/hylke-van-der-wal.jpg' },
-    { id: 13, nummer: 15, name: 'Maurick Veldman',     goals: 0, matches: 0, diensten: 0, photo: 'photos/maurick-veldman.jpg' },
-    { id: 14, nummer: 16, name: 'Lucas van den Berg',  goals: 2, matches: 0, diensten: 0, photo: 'photos/lucas-van-den-berg.jpg' },
-    { id: 15, nummer: 19, name: 'Tom van Aalst',       goals: 0, matches: 0, diensten: 0, photo: 'photos/tom-van-aalst.jpg' },
-    { id: 16, nummer: 19, name: 'Max van Aalst',       goals: 0, matches: 0, diensten: 2, photo: 'photos/max-van-aalst.jpg' },
-    { id: 17, nummer: 25, name: 'Joppe Pronk',         goals: 0, matches: 0, diensten: 1, captain: true, photo: 'photos/joppe-pronk.jpg' }
+    { id: 1,  nummer: 1,  name: 'Floris',              goals: 1, assists: 0, matches: 0, diensten: 2, photo: 'photos/floris.jpg' },
+    { id: 2,  nummer: 2,  name: 'Bas van Neer',        goals: 0, assists: 0, matches: 0, diensten: 0, photo: 'photos/bas-van-neer.jpg' },
+    { id: 3,  nummer: 3,  name: 'Daan Loose',          goals: 1, assists: 0, matches: 0, diensten: 1, photo: 'photos/daan-loose.jpg' },
+    { id: 4,  nummer: 4,  name: 'Willem van Diemen',   goals: 3, assists: 0, matches: 0, diensten: 3, photo: 'photos/willem-van-diemen.jpg' },
+    { id: 5,  nummer: 6,  name: 'Jord Roest',          goals: 5, assists: 0, matches: 0, diensten: 1, photo: 'photos/jord-roest.jpg' },
+    { id: 6,  nummer: 7,  name: 'Wout',                goals: 0, assists: 0, matches: 0, diensten: 1, photo: 'photos/wout.jpg' },
+    { id: 7,  nummer: 8,  name: 'Dirk Swart',          goals: 2, assists: 0, matches: 0, diensten: 2, photo: 'photos/dirk-swart.jpg' },
+    { id: 8,  nummer: 9,  name: 'Stein Visser',        goals: 0, assists: 0, matches: 0, diensten: 1, photo: 'photos/stein-visser.jpg' },
+    { id: 9,  nummer: 10, name: 'Joris Kortenaar',     goals: 2, assists: 0, matches: 0, diensten: 1, photo: 'photos/joris-kortenaar.jpg' },
+    { id: 10, nummer: 11, name: 'Pim van der Moolen',  goals: 2, assists: 0, matches: 0, diensten: 0, photo: 'photos/pim-van-der-moolen.jpg' },
+    { id: 11, nummer: 12, name: 'Jay Schoppink',       goals: 1, assists: 0, matches: 0, diensten: 2, photo: 'photos/jay-schoppink.jpg' },
+    { id: 12, nummer: 14, name: 'Hylke van der Wal',   goals: 0, assists: 0, matches: 0, diensten: 0, photo: 'photos/hylke-van-der-wal.jpg' },
+    { id: 13, nummer: 15, name: 'Maurick Veldman',     goals: 0, assists: 0, matches: 0, diensten: 0, photo: 'photos/maurick-veldman.jpg' },
+    { id: 14, nummer: 16, name: 'Lucas van den Berg',  goals: 2, assists: 0, matches: 0, diensten: 0, photo: 'photos/lucas-van-den-berg.jpg' },
+    { id: 15, nummer: 19, name: 'Tom van Aalst',       goals: 0, assists: 0, matches: 0, diensten: 0, photo: 'photos/tom-van-aalst.jpg' },
+    { id: 16, nummer: 19, name: 'Max van Aalst',       goals: 0, assists: 0, matches: 0, diensten: 2, photo: 'photos/max-van-aalst.jpg' },
+    { id: 17, nummer: 25, name: 'Joppe Pronk',         goals: 0, assists: 0, matches: 0, diensten: 1, captain: true, photo: 'photos/joppe-pronk.jpg' }
 ];
 
-// Altijd defaultPlayers laden zodat de data actueel is
 let players = defaultPlayers.map(dp => {
-    const stored = (JSON.parse(localStorage.getItem('hockeyPlayers')) || []).find(p => p.id === dp.id);
-    // Neem stored waarden over als ze bestaan, anders default
+    const stored = safeJsonParse('hockeyPlayers', []).find(p => p.id === dp.id);
     return stored ? { ...dp, ...stored, nummer: dp.nummer, name: dp.name, photo: dp.photo, captain: dp.captain } : { ...dp };
 });
 localStorage.setItem('hockeyPlayers', JSON.stringify(players));
@@ -41,7 +95,7 @@ const defaultMatch = {
     gatherTime: ''
 };
 
-let matchData = JSON.parse(localStorage.getItem('hockeyMatch')) || { ...defaultMatch };
+let matchData = safeJsonParse('hockeyMatch', { ...defaultMatch });
 
 function saveMatchData() {
     localStorage.setItem('hockeyMatch', JSON.stringify(matchData));
@@ -59,33 +113,37 @@ function renderMatch() {
     const emptyState = document.getElementById('matchEmpty');
     const matchContent = document.getElementById('matchContent');
 
-    // Check of er een wedstrijd is ingesteld
     const hasMatch = matchData.date && matchData.awayTeam;
 
     if (!hasMatch) {
-        // Empty state tonen
         if (emptyState) emptyState.style.display = 'block';
         if (matchContent) matchContent.style.display = 'none';
     } else {
-        // Wedstrijd info tonen
         if (emptyState) emptyState.style.display = 'none';
         if (matchContent) matchContent.style.display = 'block';
 
-        document.getElementById('matchDate').textContent = formatDate(matchData.date);
-        document.getElementById('awayTeam').textContent = matchData.awayTeam;
-        document.getElementById('matchTime').textContent = matchData.matchTime || '--:--';
-        document.getElementById('gatherTime').textContent = matchData.gatherTime || '--:--';
+        const matchDateEl = document.getElementById('matchDate');
+        const awayTeamEl = document.getElementById('awayTeam');
+        const matchTimeEl = document.getElementById('matchTime');
+        const gatherTimeEl = document.getElementById('gatherTime');
 
-        // Away team badge
+        if (matchDateEl) matchDateEl.textContent = formatDate(matchData.date);
+        if (awayTeamEl) awayTeamEl.textContent = matchData.awayTeam;
+        if (matchTimeEl) matchTimeEl.textContent = matchData.matchTime || '--:--';
+        if (gatherTimeEl) gatherTimeEl.textContent = matchData.gatherTime || '--:--';
+
         const awayBadgeWrapper = document.getElementById('awayBadge');
-        if (matchData.awayLogo) {
-            awayBadgeWrapper.innerHTML = `<img src="${matchData.awayLogo}" alt="${matchData.awayTeam}" class="team-badge" onerror="this.parentElement.innerHTML='<div class=\\'team-badge team-badge-placeholder\\'>?</div>'">`;
-        } else {
-            awayBadgeWrapper.innerHTML = `<div class="team-badge team-badge-placeholder">?</div>`;
+        if (awayBadgeWrapper) {
+            if (matchData.awayLogo && isValidUrl(matchData.awayLogo)) {
+                const logoUrl = escapeHtml(matchData.awayLogo);
+                const teamName = escapeHtml(matchData.awayTeam);
+                awayBadgeWrapper.innerHTML = `<img src="${logoUrl}" alt="${teamName}" class="team-badge" onerror="this.parentElement.innerHTML='<div class=\\'team-badge team-badge-placeholder\\'>?</div>'">`;
+            } else {
+                awayBadgeWrapper.innerHTML = `<div class="team-badge team-badge-placeholder">?</div>`;
+            }
         }
     }
 
-    // Match card klikbaar maken voor admin
     if (matchCard) {
         matchCard.onclick = isAdmin ? openMatchModal : null;
         matchCard.style.cursor = isAdmin ? 'pointer' : 'default';
@@ -106,9 +164,15 @@ function closeMatchModal() {
 }
 
 function saveMatch() {
+    const logoUrl = document.getElementById('editAwayLogo').value.trim();
+    if (logoUrl && !isValidUrl(logoUrl)) {
+        alert('Ongeldige logo URL');
+        return;
+    }
+
     matchData.date = document.getElementById('editMatchDate').value;
     matchData.awayTeam = document.getElementById('editAwayTeam').value.trim() || 'Tegenstander';
-    matchData.awayLogo = document.getElementById('editAwayLogo').value.trim();
+    matchData.awayLogo = logoUrl;
     matchData.matchTime = document.getElementById('editMatchTime').value;
     matchData.gatherTime = document.getElementById('editGatherTime').value;
     saveMatchData();
@@ -116,69 +180,72 @@ function saveMatch() {
     closeMatchModal();
 }
 
-// Modal sluiten bij klik buiten
 document.getElementById('matchModal').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeMatchModal();
 });
 
-// ===== COMPETITIE DATA =====
-const defaultStand = [
-    { pos: 1, team: 'Rood-Wit HO25-1-O', played: 8, points: 19, wins: 6, draws: 1, losses: 1, diff: 21 },
-    { pos: 2, team: 'Reigers HO25-1', played: 8, points: 19, wins: 6, draws: 1, losses: 1, diff: 5 },
-    { pos: 3, team: 'Pinoké HO25-3', played: 8, points: 9, wins: 3, draws: 0, losses: 5, diff: -3 },
-    { pos: 4, team: 'Terriërs HO25-1', played: 8, points: 7, wins: 2, draws: 1, losses: 5, diff: -14, isUs: true },
-    { pos: 5, team: 'Qui Vive HO25-2', played: 8, points: 4, wins: 1, draws: 1, losses: 6, diff: -9 }
-];
-
-const defaultUitslagen = [
-    { id: 1, date: '2024-11-30', home: 'Qui Vive HO25-2', away: 'Rood-Wit HO25-1-O', scoreHome: 4, scoreAway: 5 },
-    { id: 2, date: '2024-11-23', home: 'Terriërs HO25-1', away: 'Pinoké HO25-3', scoreHome: 2, scoreAway: 5, isOurs: true, scorers: [], dienpieten: [], processed: true },
-    { id: 3, date: '2024-11-16', home: 'Pinoké HO25-3', away: 'Reigers HO25-1', scoreHome: 1, scoreAway: 3 },
-    { id: 4, date: '2024-11-16', home: 'Rood-Wit HO25-1-O', away: 'Terriërs HO25-1', scoreHome: 8, scoreAway: 0, isOurs: true, scorers: [], dienpieten: [], processed: true },
-    { id: 5, date: '2024-11-09', home: 'Qui Vive HO25-2', away: 'Pinoké HO25-3', scoreHome: 3, scoreAway: 2 },
-    { id: 6, date: '2024-11-09', home: 'Reigers HO25-1', away: 'Terriërs HO25-1', scoreHome: 5, scoreAway: 4, isOurs: true, scorers: [], dienpieten: [], processed: true },
-    { id: 7, date: '2024-11-02', home: 'Terriërs HO25-1', away: 'Qui Vive HO25-2', scoreHome: 4, scoreAway: 3, isOurs: true, scorers: [], dienpieten: [], processed: true },
-    { id: 8, date: '2024-11-02', home: 'Reigers HO25-1', away: 'Rood-Wit HO25-1-O', scoreHome: 3, scoreAway: 2 }
-];
-
-let standData = JSON.parse(localStorage.getItem('hockeyStand')) || [...defaultStand];
-let uitslagenData = JSON.parse(localStorage.getItem('hockeyUitslagen')) || [...defaultUitslagen];
-
-function saveCompData() {
-    localStorage.setItem('hockeyStand', JSON.stringify(standData));
-    localStorage.setItem('hockeyUitslagen', JSON.stringify(uitslagenData));
-}
-
-// ===== HELPERS =====
-function getInitials(name) {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-}
-
-function getFirstName(name) {
-    return name.split(' ')[0];
-}
-
-function getAvatarContent(player) {
-    if (player.photo) {
-        return `<img src="${player.photo}" alt="${player.name}" onerror="this.style.display='none'; this.parentElement.textContent='${getInitials(player.name)}'">`;
-    }
-    return getInitials(player.name);
-}
-
 // ===== ADMIN LOGIN =====
-const ADMIN_PIN = '5153';
-let isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+const ADMIN_PIN_HASH = '2c52330077a08ea7f0795ff8786dc5c50f160359cbb1c0fe6708ea026cfd34e3';
+const ADMIN_TIMEOUT_MS = 30 * 60 * 1000; // 30 minuten
+let isAdmin = false;
+let adminTimeoutId = null;
+
+async function hashPin(pin) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(pin);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function resetAdminTimeout() {
+    if (adminTimeoutId) clearTimeout(adminTimeoutId);
+    if (isAdmin) {
+        adminTimeoutId = setTimeout(() => {
+            isAdmin = false;
+            sessionStorage.removeItem('isAdmin');
+            sessionStorage.removeItem('adminLoginTime');
+            updateAdminUI(true);
+        }, ADMIN_TIMEOUT_MS);
+    }
+}
+
+// Herstel admin sessie als die recent genoeg is
+(function restoreAdminSession() {
+    if (sessionStorage.getItem('isAdmin') === 'true') {
+        const loginTime = parseInt(sessionStorage.getItem('adminLoginTime') || '0', 10);
+        if (Date.now() - loginTime < ADMIN_TIMEOUT_MS) {
+            isAdmin = true;
+            resetAdminTimeout();
+        } else {
+            sessionStorage.removeItem('isAdmin');
+            sessionStorage.removeItem('adminLoginTime');
+        }
+    }
+})();
+
+// Reset timeout bij user activiteit
+['click', 'keydown', 'touchstart'].forEach(evt => {
+    document.addEventListener(evt, () => {
+        if (isAdmin) resetAdminTimeout();
+    }, { passive: true });
+});
 
 function updateAdminUI(rerender) {
-    document.getElementById('adminBtn').classList.toggle('logged-in', isAdmin);
-    document.getElementById('selectieTab').style.display = isAdmin ? '' : 'none';
+    const adminBtn = document.getElementById('adminBtn');
+    const selectieTab = document.getElementById('selectieTab');
+    if (adminBtn) adminBtn.classList.toggle('logged-in', isAdmin);
+    if (selectieTab) selectieTab.style.display = isAdmin ? '' : 'none';
     document.body.classList.toggle('admin-mode', isAdmin);
-    // Als admin uitlogt terwijl selectie tab open is, ga terug naar wedstrijd
-    if (!isAdmin && document.getElementById('tab-selectie').classList.contains('active')) {
+
+    const selectieContent = document.getElementById('tab-selectie');
+    if (!isAdmin && selectieContent && selectieContent.classList.contains('active')) {
         document.querySelectorAll('.tab-nav .tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelector('[data-tab="wedstrijd"]').classList.add('active');
-        document.getElementById('tab-wedstrijd').classList.add('active');
+        const wedstrijdTab = document.querySelector('[data-tab="wedstrijd"]');
+        const wedstrijdContent = document.getElementById('tab-wedstrijd');
+        if (wedstrijdTab) wedstrijdTab.classList.add('active');
+        if (wedstrijdContent) wedstrijdContent.classList.add('active');
     }
     if (rerender) {
         renderMatch();
@@ -194,6 +261,8 @@ function openLogin() {
         if (confirm('Wil je uitloggen als admin?')) {
             isAdmin = false;
             sessionStorage.removeItem('isAdmin');
+            sessionStorage.removeItem('adminLoginTime');
+            if (adminTimeoutId) clearTimeout(adminTimeoutId);
             updateAdminUI(true);
         }
         return;
@@ -209,11 +278,14 @@ function closeLogin() {
     document.getElementById('loginOverlay').classList.remove('show');
 }
 
-function submitLogin() {
+async function submitLogin() {
     const pin = document.getElementById('pinInput').value;
-    if (pin === ADMIN_PIN) {
+    const pinHash = await hashPin(pin);
+    if (pinHash === ADMIN_PIN_HASH) {
         isAdmin = true;
         sessionStorage.setItem('isAdmin', 'true');
+        sessionStorage.setItem('adminLoginTime', Date.now().toString());
+        resetAdminTimeout();
         closeLogin();
         updateAdminUI(true);
     } else {
@@ -225,12 +297,10 @@ function submitLogin() {
     }
 }
 
-// Enter toets in pin input
 document.getElementById('pinInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') submitLogin();
 });
 
-// Overlay sluiten bij klik buiten card
 document.getElementById('loginOverlay').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeLogin();
 });
@@ -244,20 +314,20 @@ document.querySelectorAll('.tab-nav .tab').forEach(tab => {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
         tab.classList.add('active');
-        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        const tabContent = document.getElementById('tab-' + tab.dataset.tab);
+        if (tabContent) tabContent.classList.add('active');
     });
 });
 
 // ===== OPSTELLING =====
-// Posities -> player id (null = lege positie)
 const defaultLineup = {
-    lw: 10, cf: 11, rw: 12,        // Aanval: Pim, Jay, Hylke
-    lm: 17, lcm: 5, rcm: 2, rm: 8, // Middenveld: Joppe, Jord, Bas, Stein
-    lb: 6, cb: 4, rb: 3,           // Verdediging: Wout, Willem, Daan
-    gk: 1                           // Keeper: Floris
+    lw: 10, cf: 11, rw: 12,
+    lm: 17, lcm: 5, rcm: 2, rm: 8,
+    lb: 6, cb: 4, rb: 3,
+    gk: 1
 };
 
-let lineup = JSON.parse(localStorage.getItem('hockeyLineup')) || { ...defaultLineup };
+let lineup = safeJsonParse('hockeyLineup', { ...defaultLineup });
 
 function saveLineup() {
     localStorage.setItem('hockeyLineup', JSON.stringify(lineup));
@@ -270,7 +340,6 @@ function renderLineup() {
         const el = document.querySelector(`[data-position="${position}"]`);
         if (!el) return;
 
-        // Lege positie
         if (playerId === null) {
             el.innerHTML = `<div class="player-empty"></div>`;
             el.removeAttribute('data-player-id');
@@ -281,16 +350,13 @@ function renderLineup() {
         if (!player) return;
 
         const captainClass = player.captain ? ' captain' : '';
-        const avatarInner = player.photo
-            ? `<img src="${player.photo}" alt="${player.name}" onerror="this.style.display='none'; this.parentElement.textContent='${getInitials(player.name)}'">`
-            : getInitials(player.name);
 
         el.setAttribute('data-player-id', player.id);
         el.innerHTML = `
-            <div class="player-avatar${captainClass}">${avatarInner}</div>
+            <div class="player-avatar${captainClass}">${renderAvatarInner(player)}</div>
             <div class="player-label">
                 <span class="player-number">${player.nummer}</span>
-                <span class="player-name">${getFirstName(player.name)}</span>
+                <span class="player-name">${escapeHtml(getFirstName(player.name))}</span>
             </div>
         `;
     });
@@ -298,26 +364,21 @@ function renderLineup() {
     // Wissels
     const subs = players.filter(p => !lineupPlayerIds.includes(p.id));
     const subsList = document.getElementById('subsList');
+    if (!subsList) return;
 
     if (subs.length === 0) {
         subsList.innerHTML = '<span style="color:#999;font-size:12px">Geen wissels</span>';
     } else {
-        subsList.innerHTML = subs.map(p => {
-            const avatarInner = p.photo
-                ? `<img src="${p.photo}" alt="${p.name}" onerror="this.style.display='none'; this.parentElement.textContent='${getInitials(p.name)}'">`
-                : getInitials(p.name);
-            return `
-                <div class="sub-player" data-player-id="${p.id}">
-                    <div class="sub-avatar">${avatarInner}</div>
-                    <div class="sub-label">
-                        <span class="sub-number">${p.nummer}</span>
-                        <span class="sub-name">${getFirstName(p.name)}</span>
-                    </div>
-                </div>`;
-        }).join('');
+        subsList.innerHTML = subs.map(p => `
+            <div class="sub-player" data-player-id="${p.id}">
+                <div class="sub-avatar">${renderAvatarInner(p)}</div>
+                <div class="sub-label">
+                    <span class="sub-number">${p.nummer}</span>
+                    <span class="sub-name">${escapeHtml(getFirstName(p.name))}</span>
+                </div>
+            </div>`).join('');
     }
 
-    // Bind drag events als admin
     if (isAdmin) {
         bindDragEvents();
     }
@@ -331,8 +392,11 @@ document.querySelectorAll('#tab-ranglijst .segment').forEach(tab => {
         currentStat = tab.dataset.stat;
         document.querySelectorAll('#tab-ranglijst .segment').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        document.getElementById('pageTitle').textContent =
-            currentStat === 'goals' ? 'Topscorers' : 'Meeste Wedstrijden';
+        const pageTitle = document.getElementById('pageTitle');
+        if (pageTitle) {
+            pageTitle.textContent =
+                currentStat === 'goals' ? 'Topscorers' : currentStat === 'assists' ? 'Meeste Assists' : 'Meeste Wedstrijden';
+        }
         renderLeaderboard();
     });
 });
@@ -349,50 +413,42 @@ function adjustStat(playerId, stat, delta) {
 function editButtons(playerId, stat) {
     if (!isAdmin) return '';
     return `<div class="edit-btns">
-        <button class="edit-btn minus" onclick="adjustStat(${playerId},'${stat}',-1)">&minus;</button>
-        <button class="edit-btn plus" onclick="adjustStat(${playerId},'${stat}',1)">+</button>
+        <button class="edit-btn minus" onclick="adjustStat(${playerId},'${escapeHtml(stat)}',-1)">&minus;</button>
+        <button class="edit-btn plus" onclick="adjustStat(${playerId},'${escapeHtml(stat)}',1)">+</button>
     </div>`;
 }
 
 function renderLeaderboard() {
     const sorted = [...players].sort((a, b) => b[currentStat] - a[currentStat]);
-    const label = currentStat === 'goals' ? 'goals' : 'wedstrijden';
+    const label = currentStat === 'goals' ? 'goals' : currentStat === 'assists' ? 'assists' : 'wedstrijden';
 
-    // Podium tonen/verbergen op basis van admin status
     const podiumEl = document.getElementById('podium');
     if (podiumEl) {
         podiumEl.style.display = isAdmin ? 'none' : 'flex';
     }
 
     const listContainer = document.getElementById('leaderboardList');
+    if (!listContainer) return;
 
     if (isAdmin) {
-        // Admin: volledige lijst zoals diensten
-        listContainer.innerHTML = sorted.map((player, i) => {
-            const avatarInner = player.photo
-                ? `<img src="${player.photo}" alt="${player.name}" onerror="this.style.display='none'; this.parentElement.textContent='${getInitials(player.name)}'">`
-                : getInitials(player.name);
-
-            return `
-                <div class="list-item">
-                    <div class="list-rank">${i + 1}</div>
-                    <div class="list-avatar">${avatarInner}</div>
-                    <div class="list-info">
-                        <div class="list-name">${player.name}</div>
-                    </div>
-                    <div class="list-stat">${player[currentStat]}${editButtons(player.id, currentStat)}</div>
-                </div>`;
-        }).join('');
+        listContainer.innerHTML = sorted.map((player, i) => `
+            <div class="list-item">
+                <div class="list-rank">${i + 1}</div>
+                <div class="list-avatar">${renderAvatarInner(player)}</div>
+                <div class="list-info">
+                    <div class="list-name">${escapeHtml(player.name)}</div>
+                </div>
+                <div class="list-stat">${player[currentStat]}${editButtons(player.id, currentStat)}</div>
+            </div>`).join('');
     } else {
-        // Normale gebruiker: podium + lijst vanaf 4
         // Top 3 in podium
         for (let i = 1; i <= 3; i++) {
             const player = sorted[i - 1];
             const avatarEl = document.getElementById(`avatar${i}`);
             const nameEl = document.getElementById(`name${i}`);
             const statEl = document.getElementById(`stat${i}`);
-            if (player) {
-                avatarEl.innerHTML = getAvatarContent(player);
+            if (player && avatarEl && nameEl && statEl) {
+                avatarEl.innerHTML = renderAvatarInner(player);
                 nameEl.textContent = getFirstName(player.name);
                 statEl.innerHTML = `${player[currentStat]} ${label}`;
             }
@@ -407,13 +463,13 @@ function renderLeaderboard() {
 
         listContainer.innerHTML = rest.map((player, index) => {
             const rank = index + 4;
-            const captainBadge = player.captain ? ' <span class="captain">(C)</span>' : '';
+            const captainBadge = player.captain ? ` <span class="captain">(C)</span>` : '';
             return `
                 <div class="list-item">
                     <div class="list-rank">${rank}</div>
-                    <div class="list-avatar">${getAvatarContent(player)}</div>
+                    <div class="list-avatar">${renderAvatarInner(player)}</div>
                     <div class="list-info">
-                        <div class="list-name">${player.name}${captainBadge}</div>
+                        <div class="list-name">${escapeHtml(player.name)}${captainBadge}</div>
                     </div>
                     <div class="list-stat">${player[currentStat]}</div>
                 </div>`;
@@ -421,274 +477,15 @@ function renderLeaderboard() {
     }
 }
 
-// ===== COMPETITIE =====
-let currentCompView = 'stand';
-
-document.querySelectorAll('#tab-competitie .segment').forEach(tab => {
-    tab.addEventListener('click', () => {
-        currentCompView = tab.dataset.comp;
-        document.querySelectorAll('#tab-competitie .segment').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.comp-view').forEach(v => v.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('comp-' + currentCompView).classList.add('active');
-    });
-});
-
-function renderStand() {
-    const container = document.getElementById('standList');
-
-    container.innerHTML = standData.map(team => {
-        const isUs = team.isUs ? ' stand-row-us' : '';
-        const diffClass = team.diff > 0 ? 'positive' : (team.diff < 0 ? 'negative' : '');
-        const diffStr = team.diff > 0 ? '+' + team.diff : team.diff;
-
-        return `
-            <div class="stand-row${isUs}">
-                <span class="stand-pos">${team.pos}</span>
-                <span class="stand-team">${team.team}</span>
-                <span class="stand-col">${team.played}</span>
-                <span class="stand-col stand-points">${team.points}</span>
-                <span class="stand-col">${team.wins}</span>
-                <span class="stand-col">${team.draws}</span>
-                <span class="stand-col">${team.losses}</span>
-                <span class="stand-col stand-diff ${diffClass}">${diffStr}</span>
-            </div>`;
-    }).join('');
-}
-
-function renderUitslagen() {
-    const container = document.getElementById('uitslagenList');
-
-    // Groepeer op datum
-    const grouped = {};
-    uitslagenData.forEach(match => {
-        if (!grouped[match.date]) grouped[match.date] = [];
-        grouped[match.date].push(match);
-    });
-
-    // Sorteer datums (nieuwste eerst)
-    const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
-
-    container.innerHTML = sortedDates.map(date => {
-        const matches = grouped[date];
-        const dateObj = new Date(date);
-        const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
-        const months = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
-        const dateStr = `${days[dateObj.getDay()]} ${dateObj.getDate()} ${months[dateObj.getMonth()]}`;
-
-        const matchesHtml = matches.map(match => {
-            const homeUs = match.home.includes('Terriërs') ? ' team-us' : '';
-            const awayUs = match.away.includes('Terriërs') ? ' team-us' : '';
-
-            // Admin knop voor onze wedstrijden
-            let adminBtn = '';
-            if (isAdmin && match.isOurs) {
-                const icon = match.processed
-                    ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>'
-                    : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>';
-                adminBtn = `<button class="uitslag-admin-btn${match.processed ? ' processed' : ''}" onclick="openMatchReport(${match.id})">${icon}</button>`;
-            }
-
-            return `
-                <div class="uitslag-row${match.isOurs ? ' uitslag-ours' : ''}">
-                    <span class="uitslag-team uitslag-home${homeUs}">${match.home}${homeUs ? ' <span class="heart">♥</span>' : ''}</span>
-                    <span class="uitslag-score">${match.scoreHome} - ${match.scoreAway}</span>
-                    <span class="uitslag-team uitslag-away${awayUs}">${awayUs ? '<span class="heart">♥</span> ' : ''}${match.away}</span>
-                    ${adminBtn}
-                </div>`;
-        }).join('');
-
-        return `
-            <div class="uitslag-group">
-                <div class="uitslag-date">${dateStr}</div>
-                ${matchesHtml}
-            </div>`;
-    }).join('');
-}
-
-function renderCompetitie() {
-    renderStand();
-    renderUitslagen();
-}
-
-// ===== WEDSTRIJD RAPPORT =====
-let currentReportMatch = null;
-let reportScorers = [];
-let reportDiensten = [];
-
-function openMatchReport(matchId) {
-    const match = uitslagenData.find(m => m.id === matchId);
-    if (!match) return;
-
-    currentReportMatch = match;
-    reportScorers = match.scorers ? [...match.scorers] : [];
-    reportDiensten = match.dienpieten ? [...match.dienpieten] : [];
-
-    // Vul modal
-    const dateObj = new Date(match.date);
-    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
-    document.getElementById('reportDate').textContent = `${days[dateObj.getDay()]} ${dateObj.getDate()}/${dateObj.getMonth() + 1}`;
-    document.getElementById('reportOpponent').textContent = match.home.includes('Terriërs') ? match.away : match.home;
-    document.getElementById('reportScore').textContent = `${match.scoreHome} - ${match.scoreAway}`;
-
-    // Bepaal of we thuis of uit speelden
-    const weHome = match.home.includes('Terriërs');
-    const ourScore = weHome ? match.scoreHome : match.scoreAway;
-    const theirScore = weHome ? match.scoreAway : match.scoreHome;
-    const resultText = ourScore > theirScore ? 'Gewonnen' : (ourScore < theirScore ? 'Verloren' : 'Gelijk');
-    const resultClass = ourScore > theirScore ? 'win' : (ourScore < theirScore ? 'loss' : 'draw');
-    document.getElementById('reportResult').textContent = resultText;
-    document.getElementById('reportResult').className = 'report-result ' + resultClass;
-
-    renderReportScorers();
-    renderReportDiensten();
-
-    document.getElementById('matchReportModal').classList.add('show');
-}
-
-function closeMatchReport() {
-    document.getElementById('matchReportModal').classList.remove('show');
-    currentReportMatch = null;
-}
-
-function renderReportScorers() {
-    const container = document.getElementById('reportScorersList');
-    const ourScore = currentReportMatch.home.includes('Terriërs')
-        ? currentReportMatch.scoreHome
-        : currentReportMatch.scoreAway;
-
-    if (ourScore === 0) {
-        container.innerHTML = '<div class="report-empty">Geen doelpunten</div>';
-        return;
-    }
-
-    container.innerHTML = `
-        <div class="report-player-grid">
-            ${players.map(p => {
-                const count = reportScorers.filter(id => id === p.id).length;
-                return `
-                    <div class="report-player-item${count > 0 ? ' active' : ''}" data-player="${p.id}">
-                        <span class="report-player-name">${getFirstName(p.name)}</span>
-                        <div class="report-player-controls">
-                            <button class="report-btn minus" onclick="adjustReportScorer(${p.id}, -1)">−</button>
-                            <span class="report-player-count">${count}</span>
-                            <button class="report-btn plus" onclick="adjustReportScorer(${p.id}, 1)">+</button>
-                        </div>
-                    </div>`;
-            }).join('')}
-        </div>
-        <div class="report-total">Totaal: <strong>${reportScorers.length}</strong> / ${ourScore} goals</div>
-    `;
-}
-
-function adjustReportScorer(playerId, delta) {
-    if (delta > 0) {
-        reportScorers.push(playerId);
-    } else {
-        const idx = reportScorers.lastIndexOf(playerId);
-        if (idx > -1) reportScorers.splice(idx, 1);
-    }
-    renderReportScorers();
-}
-
-function renderReportDiensten() {
-    const container = document.getElementById('reportDienstenList');
-
-    container.innerHTML = `
-        <div class="report-player-grid">
-            ${players.map(p => {
-                const hasDienst = reportDiensten.includes(p.id);
-                return `
-                    <div class="report-player-chip${hasDienst ? ' active' : ''}" onclick="toggleReportDienst(${p.id})">
-                        ${getFirstName(p.name)}
-                    </div>`;
-            }).join('')}
-        </div>
-    `;
-}
-
-function toggleReportDienst(playerId) {
-    const idx = reportDiensten.indexOf(playerId);
-    if (idx > -1) {
-        reportDiensten.splice(idx, 1);
-    } else {
-        reportDiensten.push(playerId);
-    }
-    renderReportDiensten();
-}
-
-function saveMatchReport() {
-    if (!currentReportMatch) return;
-
-    // Update goals voor scorers
-    const oldScorers = currentReportMatch.scorers || [];
-
-    // Verwijder oude goals (alleen als niet al processed)
-    if (!currentReportMatch.processed) {
-        // Eerste keer opslaan, voeg goals toe
-        reportScorers.forEach(playerId => {
-            const player = players.find(p => p.id === playerId);
-            if (player) player.goals++;
-        });
-
-        // Voeg diensten toe
-        reportDiensten.forEach(playerId => {
-            const player = players.find(p => p.id === playerId);
-            if (player) player.diensten = (player.diensten || 0) + 1;
-        });
-    } else {
-        // Update: bereken verschil
-        // Goals: verwijder oude, voeg nieuwe toe
-        oldScorers.forEach(playerId => {
-            const player = players.find(p => p.id === playerId);
-            if (player) player.goals = Math.max(0, player.goals - 1);
-        });
-        reportScorers.forEach(playerId => {
-            const player = players.find(p => p.id === playerId);
-            if (player) player.goals++;
-        });
-
-        // Diensten: verwijder oude, voeg nieuwe toe
-        const oldDiensten = currentReportMatch.dienpieten || [];
-        oldDiensten.forEach(playerId => {
-            const player = players.find(p => p.id === playerId);
-            if (player) player.diensten = Math.max(0, (player.diensten || 0) - 1);
-        });
-        reportDiensten.forEach(playerId => {
-            const player = players.find(p => p.id === playerId);
-            if (player) player.diensten = (player.diensten || 0) + 1;
-        });
-    }
-
-    // Update match data
-    currentReportMatch.scorers = [...reportScorers];
-    currentReportMatch.dienpieten = [...reportDiensten];
-    currentReportMatch.processed = true;
-
-    // Save alles
-    savePlayersData();
-    saveCompData();
-
-    // Re-render
-    renderCompetitie();
-    renderLeaderboard();
-    renderDiensten();
-
-    closeMatchReport();
-}
-
-// Modal sluiten bij klik buiten
-document.getElementById('matchReportModal').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closeMatchReport();
-});
-
 // ===== DIENSTEN =====
 let dienstenAsc = false;
 
 function toggleDienstenSort() {
     dienstenAsc = !dienstenAsc;
-    document.getElementById('sortIcon').classList.toggle('asc', dienstenAsc);
-    document.getElementById('sortLabel').textContent = dienstenAsc ? 'Minste eerst' : 'Meeste eerst';
+    const sortIcon = document.getElementById('sortIcon');
+    const sortLabel = document.getElementById('sortLabel');
+    if (sortIcon) sortIcon.classList.toggle('asc', dienstenAsc);
+    if (sortLabel) sortLabel.textContent = dienstenAsc ? 'Minste eerst' : 'Meeste eerst';
     renderDiensten();
 }
 
@@ -708,6 +505,7 @@ function renderDiensten() {
             : (b.diensten || 0) - (a.diensten || 0));
 
     const container = document.getElementById('dienstenList');
+    if (!container) return;
 
     if (sorted.every(p => (p.diensten || 0) === 0)) {
         container.innerHTML = '<div class="empty">Nog geen diensten geregistreerd</div>';
@@ -715,10 +513,6 @@ function renderDiensten() {
     }
 
     container.innerHTML = sorted.map((player, i) => {
-        const avatarInner = player.photo
-            ? `<img src="${player.photo}" alt="${player.name}" onerror="this.style.display='none'; this.parentElement.textContent='${getInitials(player.name)}'">`
-            : getInitials(player.name);
-
         const btns = isAdmin ? `<div class="edit-btns">
             <button class="edit-btn minus" onclick="adjustDiensten(${player.id},-1)">&minus;</button>
             <button class="edit-btn plus" onclick="adjustDiensten(${player.id},1)">+</button>
@@ -727,8 +521,8 @@ function renderDiensten() {
         return `
             <div class="dienst-row">
                 <div class="dienst-rank">${i + 1}</div>
-                <div class="dienst-avatar">${avatarInner}</div>
-                <div class="dienst-player-name">${player.name}</div>
+                <div class="dienst-avatar">${renderAvatarInner(player)}</div>
+                <div class="dienst-player-name">${escapeHtml(player.name)}</div>
                 <div class="dienst-total">${player.diensten || 0}${btns}</div>
             </div>`;
     }).join('');
@@ -738,18 +532,16 @@ function renderDiensten() {
 function renderSelectie() {
     const sorted = [...players].sort((a, b) => a.nummer - b.nummer);
     const container = document.getElementById('selectieList');
+    if (!container) return;
 
     container.innerHTML = sorted.map(player => {
-        const avatarInner = player.photo
-            ? `<img src="${player.photo}" alt="${player.name}" onerror="this.style.display='none'; this.parentElement.textContent='${getInitials(player.name)}'">`
-            : getInitials(player.name);
-        const captainBadge = player.captain ? ' <span class="captain">(C)</span>' : '';
+        const captainBadge = player.captain ? ` <span class="captain">(C)</span>` : '';
 
         return `
             <div class="selectie-row" onclick="openPlayerModal(${player.id})">
                 <div class="selectie-nummer">${player.nummer}</div>
-                <div class="selectie-avatar">${avatarInner}</div>
-                <div class="selectie-name">${player.name}${captainBadge}</div>
+                <div class="selectie-avatar">${renderAvatarInner(player)}</div>
+                <div class="selectie-name">${escapeHtml(player.name)}${captainBadge}</div>
                 <div class="selectie-edit">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                 </div>
@@ -766,8 +558,9 @@ function openPlayerModal(playerId) {
     const playerIdInput = document.getElementById('editPlayerId');
     const deleteBtn = document.getElementById('deletePlayerBtn');
 
+    if (!modal || !titleEl || !nummerInput || !nameInput || !playerIdInput || !deleteBtn) return;
+
     if (playerId) {
-        // Bewerken
         const player = players.find(p => p.id === playerId);
         if (!player) return;
         titleEl.textContent = 'Speler bewerken';
@@ -776,7 +569,6 @@ function openPlayerModal(playerId) {
         nameInput.value = player.name;
         deleteBtn.style.display = 'block';
     } else {
-        // Nieuwe speler
         titleEl.textContent = 'Nieuwe speler';
         playerIdInput.value = '';
         nummerInput.value = '';
@@ -803,20 +595,19 @@ function savePlayer() {
     }
 
     if (playerId) {
-        // Bestaande speler updaten
         const player = players.find(p => p.id === parseInt(playerId));
         if (player) {
             player.nummer = nummer;
             player.name = name;
         }
     } else {
-        // Nieuwe speler toevoegen
-        const newId = Math.max(...players.map(p => p.id)) + 1;
+        const newId = players.length > 0 ? Math.max(...players.map(p => p.id)) + 1 : 1;
         players.push({
             id: newId,
             nummer: nummer,
             name: name,
             goals: 0,
+            assists: 0,
             matches: 0,
             diensten: 0,
             photo: ''
@@ -840,10 +631,8 @@ function deletePlayer() {
 
     if (!confirm(`Weet je zeker dat je ${player.name} wilt verwijderen?`)) return;
 
-    // Verwijder uit players array
     players = players.filter(p => p.id !== playerId);
 
-    // Verwijder uit lineup als die erin staat
     Object.keys(lineup).forEach(pos => {
         if (lineup[pos] === playerId) {
             lineup[pos] = null;
@@ -859,7 +648,6 @@ function deletePlayer() {
     renderLineup();
 }
 
-// Modal sluiten bij klik buiten
 document.getElementById('playerModal').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closePlayerModal();
 });
@@ -868,11 +656,9 @@ document.getElementById('playerModal').addEventListener('click', (e) => {
 let dragState = null;
 
 function bindDragEvents() {
-    // Veld spelers
     document.querySelectorAll('.player[data-player-id]').forEach(el => {
         el.addEventListener('pointerdown', handlePointerDown);
     });
-    // Wissels
     document.querySelectorAll('.sub-player[data-player-id]').forEach(el => {
         el.addEventListener('pointerdown', handlePointerDown);
     });
@@ -884,9 +670,8 @@ function handlePointerDown(e) {
 
     const el = e.currentTarget;
     const playerId = parseInt(el.getAttribute('data-player-id'));
-    const position = el.getAttribute('data-position') || null; // null = wissel
+    const position = el.getAttribute('data-position') || null;
 
-    // Maak ghost element
     const ghost = createGhost(el, position);
     document.body.appendChild(ghost);
     positionGhost(ghost, e.clientX, e.clientY);
@@ -910,13 +695,11 @@ function createGhost(el, isFieldPlayer) {
     ghost.className = 'drag-ghost';
 
     if (isFieldPlayer) {
-        // Kopieer avatar en label van veldspeler
         const avatar = el.querySelector('.player-avatar');
         const label = el.querySelector('.player-label');
         if (avatar) ghost.appendChild(avatar.cloneNode(true));
         if (label) ghost.appendChild(label.cloneNode(true));
     } else {
-        // Kopieer wissel stijl
         const avatar = el.querySelector('.sub-avatar');
         const label = el.querySelector('.sub-label');
         if (avatar) ghost.appendChild(avatar.cloneNode(true));
@@ -941,12 +724,10 @@ function handlePointerMove(e) {
 function handlePointerUp(e) {
     if (!dragState) return;
 
-    // Verberg ghost tijdelijk voor elementFromPoint
     dragState.ghost.style.display = 'none';
     const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
     dragState.ghost.style.display = '';
 
-    // Bepaal drop zone
     const fieldPosition = dropTarget?.closest('[data-position]');
     const subsArea = dropTarget?.closest('.substitutes') || dropTarget?.closest('#subsList');
 
@@ -954,7 +735,6 @@ function handlePointerUp(e) {
         const targetPosition = fieldPosition.getAttribute('data-position');
         handleDropOnField(targetPosition);
     } else if (subsArea && dragState.sourcePosition) {
-        // Alleen veldspeler kan naar wissels
         handleDropOnSubs();
     }
 
@@ -964,18 +744,14 @@ function handlePointerUp(e) {
 function handleDropOnField(targetPosition) {
     const { playerId, sourcePosition } = dragState;
 
-    if (sourcePosition === targetPosition) return; // Zelfde positie
+    if (sourcePosition === targetPosition) return;
 
     if (sourcePosition) {
-        // Veld -> Veld: swap
         const targetPlayerId = lineup[targetPosition];
         lineup[targetPosition] = playerId;
-        lineup[sourcePosition] = targetPlayerId; // kan null zijn
+        lineup[sourcePosition] = targetPlayerId;
     } else {
-        // Wissel -> Veld
-        const existingPlayerId = lineup[targetPosition];
         lineup[targetPosition] = playerId;
-        // Bestaande speler gaat automatisch naar wissels (niet meer in lineup)
     }
 
     saveLineup();
@@ -984,7 +760,6 @@ function handleDropOnField(targetPosition) {
 
 function handleDropOnSubs() {
     const { sourcePosition } = dragState;
-    // Veldspeler naar wissels = positie wordt leeg
     lineup[sourcePosition] = null;
     saveLineup();
     renderLineup();
@@ -1004,7 +779,6 @@ function cleanupDrag() {
 // ===== INIT =====
 renderMatch();
 renderLineup();
-renderCompetitie();
 renderLeaderboard();
 renderDiensten();
 renderSelectie();
