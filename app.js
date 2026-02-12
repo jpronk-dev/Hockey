@@ -15,16 +15,6 @@ function isValidUrl(str) {
     }
 }
 
-function safeJsonParse(key, fallback) {
-    try {
-        const data = localStorage.getItem(key);
-        if (data === null) return fallback;
-        return JSON.parse(data);
-    } catch {
-        return fallback;
-    }
-}
-
 function getInitials(name) {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 }
@@ -76,24 +66,20 @@ const defaultPlayers = [
     { id: 17, nummer: 25, name: 'Joppe Pronk',         goals: 0, assists: 0, matches: 0, diensten: 1, captain: true, photo: 'photos/joppe-pronk.jpg' }
 ];
 
-let players = defaultPlayers.map(dp => {
-    const stored = safeJsonParse('hockeyPlayers', []).find(p => p.id === dp.id);
-    return stored ? { ...dp, ...stored, nummer: dp.nummer, name: dp.name, photo: dp.photo, captain: dp.captain } : { ...dp };
-});
-localStorage.setItem('hockeyPlayers', JSON.stringify(players));
+let players = [...defaultPlayers];
 
-function savePlayersData() {
-    localStorage.setItem('hockeyPlayers', JSON.stringify(players));
+async function savePlayersData() {
+    await saveData('players', players);
 }
 
 // ===== WEDSTRIJDSCHEMA =====
 const schedule = [
-    { date: '2026-03-08', opponent: 'Pinoké HO25-2',    home: true,  logo: 'logos/Pinoke.jpeg' },
+    { date: '2026-03-08', opponent: 'Pinoke HO25-2',    home: true,  logo: 'logos/Pinoke.jpeg' },
     { date: '2026-03-15', opponent: 'Amsterdam HO25-5',  home: false, logo: 'logos/Amsterdam.png' },
     { date: '2026-03-22', opponent: 'Hoorn HO25-1-O',    home: true,  logo: 'logos/Hoorn.webp' },
     { date: '2026-03-29', opponent: 'Reigers HO25-1',    home: true,  logo: 'logos/Reigers.webp' },
     { date: '2026-04-12', opponent: 'Kraaien HO25-1',    home: false, logo: 'logos/Kraaien.png' },
-    { date: '2026-04-19', opponent: 'Pinoké HO25-2',     home: false, logo: 'logos/Pinoke.jpeg' },
+    { date: '2026-04-19', opponent: 'Pinoke HO25-2',     home: false, logo: 'logos/Pinoke.jpeg' },
     { date: '2026-05-10', opponent: 'Amsterdam HO25-5',  home: true,  logo: 'logos/Amsterdam.png' },
     { date: '2026-05-17', opponent: 'Hoorn HO25-1-O',    home: false, logo: 'logos/Hoorn.webp' },
     { date: '2026-05-31', opponent: 'Reigers HO25-1',    home: false, logo: 'logos/Reigers.webp' },
@@ -105,13 +91,16 @@ function getNextMatch() {
     return schedule.find(m => m.date >= today) || null;
 }
 
-// Admin-ingestelde tijden per wedstrijddatum
+// In-memory cache voor match times (geladen bij init)
+let matchTimesCache = {};
+
 function getMatchTimes(date) {
-    return safeJsonParse('hockeyMatchTimes_' + date, { matchTime: '', gatherTime: '', awayLogo: '' });
+    return matchTimesCache[date] || { matchTime: '', gatherTime: '', awayLogo: '' };
 }
 
-function saveMatchTimes(date, times) {
-    localStorage.setItem('hockeyMatchTimes_' + date, JSON.stringify(times));
+async function saveMatchTimes(date, times) {
+    matchTimesCache[date] = times;
+    await saveData('match-times', matchTimesCache);
 }
 
 function formatDate(dateStr) {
@@ -200,7 +189,7 @@ function closeMatchModal() {
     document.getElementById('matchModal').classList.remove('show');
 }
 
-function saveMatch() {
+async function saveMatch() {
     const nextMatch = getNextMatch();
     if (!nextMatch) return;
 
@@ -215,7 +204,7 @@ function saveMatch() {
         gatherTime: document.getElementById('editGatherTime').value,
         awayLogo: logoUrl
     };
-    saveMatchTimes(nextMatch.date, times);
+    await saveMatchTimes(nextMatch.date, times);
     renderMatch();
     closeMatchModal();
 }
@@ -225,18 +214,9 @@ document.getElementById('matchModal').addEventListener('click', (e) => {
 });
 
 // ===== ADMIN LOGIN =====
-const ADMIN_PIN_HASH = '2c52330077a08ea7f0795ff8786dc5c50f160359cbb1c0fe6708ea026cfd34e3';
 const ADMIN_TIMEOUT_MS = 30 * 60 * 1000; // 30 minuten
 let isAdmin = false;
 let adminTimeoutId = null;
-
-async function hashPin(pin) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(pin);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 function resetAdminTimeout() {
     if (adminTimeoutId) clearTimeout(adminTimeoutId);
@@ -245,6 +225,7 @@ function resetAdminTimeout() {
             isAdmin = false;
             sessionStorage.removeItem('isAdmin');
             sessionStorage.removeItem('adminLoginTime');
+            sessionStorage.removeItem('adminPin');
             updateAdminUI(true);
         }, ADMIN_TIMEOUT_MS);
     }
@@ -254,12 +235,13 @@ function resetAdminTimeout() {
 (function restoreAdminSession() {
     if (sessionStorage.getItem('isAdmin') === 'true') {
         const loginTime = parseInt(sessionStorage.getItem('adminLoginTime') || '0', 10);
-        if (Date.now() - loginTime < ADMIN_TIMEOUT_MS) {
+        if (Date.now() - loginTime < ADMIN_TIMEOUT_MS && sessionStorage.getItem('adminPin')) {
             isAdmin = true;
             resetAdminTimeout();
         } else {
             sessionStorage.removeItem('isAdmin');
             sessionStorage.removeItem('adminLoginTime');
+            sessionStorage.removeItem('adminPin');
         }
     }
 })();
@@ -302,6 +284,7 @@ function openLogin() {
             isAdmin = false;
             sessionStorage.removeItem('isAdmin');
             sessionStorage.removeItem('adminLoginTime');
+            sessionStorage.removeItem('adminPin');
             if (adminTimeoutId) clearTimeout(adminTimeoutId);
             updateAdminUI(true);
         }
@@ -320,11 +303,12 @@ function closeLogin() {
 
 async function submitLogin() {
     const pin = document.getElementById('pinInput').value;
-    const pinHash = await hashPin(pin);
-    if (pinHash === ADMIN_PIN_HASH) {
+    const valid = await verifyPin(pin);
+    if (valid) {
         isAdmin = true;
         sessionStorage.setItem('isAdmin', 'true');
         sessionStorage.setItem('adminLoginTime', Date.now().toString());
+        sessionStorage.setItem('adminPin', pin);
         resetAdminTimeout();
         closeLogin();
         updateAdminUI(true);
@@ -367,10 +351,10 @@ const defaultLineup = {
     gk: 1
 };
 
-let lineup = safeJsonParse('hockeyLineup', { ...defaultLineup });
+let lineup = { ...defaultLineup };
 
-function saveLineup() {
-    localStorage.setItem('hockeyLineup', JSON.stringify(lineup));
+async function saveLineup() {
+    await saveData('lineup', lineup);
 }
 
 function renderLineup() {
@@ -441,11 +425,11 @@ document.querySelectorAll('#tab-ranglijst .segment').forEach(tab => {
     });
 });
 
-function adjustStat(playerId, stat, delta) {
+async function adjustStat(playerId, stat, delta) {
     const player = players.find(p => p.id === playerId);
     if (player) {
         player[stat] = Math.max(0, (player[stat] || 0) + delta);
-        savePlayersData();
+        await savePlayersData();
         renderLeaderboard();
     }
 }
@@ -529,11 +513,11 @@ function toggleDienstenSort() {
     renderDiensten();
 }
 
-function adjustDiensten(playerId, delta) {
+async function adjustDiensten(playerId, delta) {
     const player = players.find(p => p.id === playerId);
     if (player) {
         player.diensten = Math.max(0, (player.diensten || 0) + delta);
-        savePlayersData();
+        await savePlayersData();
         renderDiensten();
     }
 }
@@ -624,7 +608,7 @@ function closePlayerModal() {
     document.getElementById('playerModal').classList.remove('show');
 }
 
-function savePlayer() {
+async function savePlayer() {
     const playerId = document.getElementById('editPlayerId').value;
     const nummer = parseInt(document.getElementById('editNummer').value);
     const name = document.getElementById('editName').value.trim();
@@ -654,7 +638,7 @@ function savePlayer() {
         });
     }
 
-    savePlayersData();
+    await savePlayersData();
     closePlayerModal();
     renderSelectie();
     renderLeaderboard();
@@ -662,7 +646,7 @@ function savePlayer() {
     renderLineup();
 }
 
-function deletePlayer() {
+async function deletePlayer() {
     const playerId = parseInt(document.getElementById('editPlayerId').value);
     if (!playerId) return;
 
@@ -679,8 +663,8 @@ function deletePlayer() {
         }
     });
 
-    savePlayersData();
-    saveLineup();
+    await savePlayersData();
+    await saveLineup();
     closePlayerModal();
     renderSelectie();
     renderLeaderboard();
@@ -781,7 +765,7 @@ function handlePointerUp(e) {
     cleanupDrag();
 }
 
-function handleDropOnField(targetPosition) {
+async function handleDropOnField(targetPosition) {
     const { playerId, sourcePosition } = dragState;
 
     if (sourcePosition === targetPosition) return;
@@ -794,14 +778,14 @@ function handleDropOnField(targetPosition) {
         lineup[targetPosition] = playerId;
     }
 
-    saveLineup();
+    await saveLineup();
     renderLineup();
 }
 
-function handleDropOnSubs() {
+async function handleDropOnSubs() {
     const { sourcePosition } = dragState;
     lineup[sourcePosition] = null;
-    saveLineup();
+    await saveLineup();
     renderLineup();
 }
 
@@ -817,8 +801,41 @@ function cleanupDrag() {
 }
 
 // ===== INIT =====
-renderMatch();
-renderLineup();
-renderLeaderboard();
-renderDiensten();
-renderSelectie();
+async function initApp() {
+    // Haal data op van de API (parallel)
+    const [storedPlayers, storedLineup, storedMatchTimes] = await Promise.all([
+        fetchData('players'),
+        fetchData('lineup'),
+        fetchData('match-times')
+    ]);
+
+    // Merge stored players met defaults (behoud structurele velden uit defaults)
+    if (storedPlayers && Array.isArray(storedPlayers)) {
+        players = defaultPlayers.map(dp => {
+            const stored = storedPlayers.find(p => p.id === dp.id);
+            return stored ? { ...dp, ...stored, nummer: dp.nummer, name: dp.name, photo: dp.photo, captain: dp.captain } : { ...dp };
+        });
+        // Voeg eventueel nieuwe spelers toe die niet in defaults staan
+        storedPlayers.forEach(sp => {
+            if (!defaultPlayers.find(dp => dp.id === sp.id)) {
+                players.push(sp);
+            }
+        });
+    }
+
+    if (storedLineup) {
+        lineup = storedLineup;
+    }
+
+    if (storedMatchTimes) {
+        matchTimesCache = storedMatchTimes;
+    }
+
+    renderMatch();
+    renderLineup();
+    renderLeaderboard();
+    renderDiensten();
+    renderSelectie();
+}
+
+initApp();

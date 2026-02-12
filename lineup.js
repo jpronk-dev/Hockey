@@ -1,6 +1,5 @@
 // Standaard opstelling (positie -> speler id)
-// Pas deze aan naar de echte opstelling van HO25-1
-const lineup = {
+const defaultLineup = {
     // Aanval
     lw: 10,   // Linksbuiten - Jay Schoppink
     cf: 13,   // Spits - Stein Visser
@@ -21,7 +20,7 @@ const lineup = {
     gk: 8     // Keeper - Bas van Neer
 };
 
-// Standaard spelerslijst (voor als localStorage leeg is)
+// Standaard spelerslijst (voor als API leeg is)
 const defaultPlayers = [
     { id: 1, name: 'Max van Aalst', goals: 0, matches: 0, photo: 'photos/max-van-aalst.jpg' },
     { id: 2, name: 'Tom van Aalst', goals: 0, matches: 0, photo: 'photos/tom-van-aalst.jpg' },
@@ -40,8 +39,8 @@ const defaultPlayers = [
     { id: 15, name: 'Joppe Pronk', goals: 0, matches: 0, captain: true, photo: 'photos/joppe-pronk.jpg' }
 ];
 
-// Spelers ophalen
-const players = JSON.parse(localStorage.getItem('hockeyPlayers')) || defaultPlayers;
+let players = [...defaultPlayers];
+let lineup = { ...defaultLineup };
 
 // Initialen maken
 function getInitials(name) {
@@ -51,7 +50,6 @@ function getInitials(name) {
 // Achternaam ophalen
 function getLastName(name) {
     const parts = name.split(' ');
-    // Skip tussenvoegels als "van", "de", "van der" etc.
     if (parts.length >= 2) {
         return parts[parts.length - 1];
     }
@@ -84,10 +82,8 @@ function getSubAvatarHtml(player) {
 
 // Opstelling renderen
 function render() {
-    // Spelers in opstelling
     const lineupPlayerIds = Object.values(lineup);
 
-    // Veld posities vullen
     Object.entries(lineup).forEach(([position, playerId]) => {
         const player = players.find(p => p.id === playerId);
         const element = document.querySelector(`[data-position="${position}"]`);
@@ -122,5 +118,30 @@ function render() {
     }
 }
 
-// Start
-render();
+// Init: haal data op van API
+async function initLineup() {
+    const [storedPlayers, storedLineup] = await Promise.all([
+        fetchData('players'),
+        fetchData('lineup')
+    ]);
+
+    if (storedPlayers && Array.isArray(storedPlayers)) {
+        players = defaultPlayers.map(dp => {
+            const stored = storedPlayers.find(p => p.id === dp.id);
+            return stored ? { ...dp, ...stored } : { ...dp };
+        });
+        storedPlayers.forEach(sp => {
+            if (!defaultPlayers.find(dp => dp.id === sp.id)) {
+                players.push(sp);
+            }
+        });
+    }
+
+    if (storedLineup) {
+        lineup = storedLineup;
+    }
+
+    render();
+}
+
+initLineup();

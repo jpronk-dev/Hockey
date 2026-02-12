@@ -19,28 +19,32 @@ const defaultPlayers = [
     { id: 17, nummer: 25, name: 'Joppe Pronk',         goals: 0, matches: 0, diensten: 1, captain: true }
 ];
 
-// Data ophalen
-let players = JSON.parse(localStorage.getItem('hockeyPlayers')) || defaultPlayers;
+let players = [...defaultPlayers];
 
-// Data opslaan
-function saveData() {
-    localStorage.setItem('hockeyPlayers', JSON.stringify(players));
+// PIN-check: redirect als geen admin PIN in sessie
+if (!sessionStorage.getItem('adminPin')) {
+    window.location.href = 'index.html';
+}
+
+// Data opslaan via API
+async function savePlayerData() {
+    await saveData('players', players);
 }
 
 // Statistiek updaten
-function updateStat(id, stat, value) {
+async function updateStat(id, stat, value) {
     const player = players.find(p => p.id === id);
     if (player) {
         player[stat] = Math.max(0, parseInt(value) || 0);
-        saveData();
+        await savePlayerData();
     }
 }
 
 // Reset naar standaard
-function resetPlayers() {
+async function resetPlayers() {
     if (confirm('Weet je zeker dat je alle statistieken wilt resetten naar 0?')) {
         players = JSON.parse(JSON.stringify(defaultPlayers));
-        saveData();
+        await savePlayerData();
         render();
     }
 }
@@ -79,5 +83,21 @@ function render() {
     }).join('');
 }
 
-// Start
-render();
+// Init: haal data op van API
+async function initAdmin() {
+    const storedPlayers = await fetchData('players');
+    if (storedPlayers && Array.isArray(storedPlayers)) {
+        players = defaultPlayers.map(dp => {
+            const stored = storedPlayers.find(p => p.id === dp.id);
+            return stored ? { ...dp, ...stored } : { ...dp };
+        });
+        storedPlayers.forEach(sp => {
+            if (!defaultPlayers.find(dp => dp.id === sp.id)) {
+                players.push(sp);
+            }
+        });
+    }
+    render();
+}
+
+initAdmin();
