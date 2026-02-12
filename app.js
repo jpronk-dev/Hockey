@@ -813,7 +813,7 @@ async function initApp() {
     if (storedPlayers && Array.isArray(storedPlayers)) {
         players = defaultPlayers.map(dp => {
             const stored = storedPlayers.find(p => p.id === dp.id);
-            return stored ? { ...dp, ...stored, nummer: dp.nummer, name: dp.name, photo: dp.photo, captain: dp.captain } : { ...dp };
+            return stored ? { ...dp, ...stored, photo: dp.photo, captain: dp.captain } : { ...dp };
         });
         // Voeg eventueel nieuwe spelers toe die niet in defaults staan
         storedPlayers.forEach(sp => {
