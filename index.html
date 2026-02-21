@@ -22,6 +22,7 @@
     <meta name="msapplication-TileImage" content="mstile-144x144.png">
     <meta name="msapplication-TileColor" content="#1a2332">
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
     <!-- Donkere header met logo -->
@@ -49,13 +50,6 @@
         </div>
     </div>
 
-    <!-- Tab navigatie -->
-    <nav class="tab-nav">
-        <button class="tab active" data-tab="wedstrijd">Wedstrijd</button>
-        <button class="tab" data-tab="ranglijst">Ranglijst</button>
-        <button class="tab" data-tab="diensten">Diensten</button>
-        <button class="tab admin-tab" data-tab="selectie" id="selectieTab" style="display:none">Selectie</button>
-    </nav>
 
     <main class="container">
 
@@ -98,6 +92,7 @@
                             <span>Verzamelen <strong id="gatherTime"></strong></span>
                         </div>
                     </div>
+                    <button class="match-finish-btn" id="matchFinishBtn" style="display:none" onclick="event.stopPropagation(); openResultModal(getNextMatch().date)">Wedstrijd afronden</button>
                 </div>
             </div>
 
@@ -142,34 +137,85 @@
             </div>
         </section>
 
-        <!-- Match report modal (admin) -->
-        <div class="modal-overlay" id="matchReportModal">
+        <!-- TAB: Uitslagen -->
+        <section class="tab-content" id="tab-uitslagen">
+            <h2 class="section-title">Uitslagen</h2>
+            <div class="uitslagen-list" id="uitslagenList"></div>
+        </section>
+
+        <!-- Result input modal (admin) — 3-step wizard -->
+        <div class="modal-overlay" id="resultModal">
             <div class="modal-card report-modal">
-                <button class="modal-close" onclick="closeMatchReport()">&times;</button>
-
+                <button class="modal-close" onclick="closeResultModal()">&times;</button>
                 <div class="report-header">
-                    <span class="report-date" id="reportDate"></span>
-                    <span class="report-vs">vs <strong id="reportOpponent"></strong></span>
+                    <span class="report-date" id="resultDate"></span>
+                    <span class="report-vs">vs <strong id="resultOpponent"></strong></span>
+                </div>
+                <div class="wizard-steps">
+                    <div class="wizard-step active" data-step="1">1</div>
+                    <div class="wizard-line"></div>
+                    <div class="wizard-step" data-step="2">2</div>
+                    <div class="wizard-line"></div>
+                    <div class="wizard-step" data-step="3">3</div>
                 </div>
 
+                <!-- Step 1: Score -->
+                <div class="wizard-panel active" id="wizardStep1">
+                    <h3 class="wizard-title">Uitslag</h3>
+                    <div class="result-score-input">
+                        <div class="score-inputs">
+                            <div class="score-team">
+                                <img src="" alt="" class="score-team-logo" id="scoreHomeLogo">
+                                <span class="score-team-label" id="scoreHomeLabel">Thuis</span>
+                            </div>
+                            <input type="number" id="resultScoreHome" min="0" max="99" placeholder="0" inputmode="numeric">
+                            <span class="score-dash">–</span>
+                            <input type="number" id="resultScoreAway" min="0" max="99" placeholder="0" inputmode="numeric">
+                            <div class="score-team">
+                                <img src="" alt="" class="score-team-logo" id="scoreAwayLogo">
+                                <span class="score-team-label" id="scoreAwayLabel">Uit</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Doelpunten -->
+                <div class="wizard-panel" id="wizardStep2">
+                    <h3 class="wizard-title">Doelpunten</h3>
+                    <div class="result-goals-section">
+                        <div id="goalRows"></div>
+                        <button class="add-goal-btn" onclick="addGoalRow()">+ Doelpunt toevoegen</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Diensten -->
+                <div class="wizard-panel" id="wizardStep3">
+                    <h3 class="wizard-title">Diensten</h3>
+                    <p class="wizard-subtitle">Wie had er dienst bij deze wedstrijd?</p>
+                    <div class="diensten-chips" id="resultDienstenList"></div>
+                </div>
+
+                <div class="modal-buttons wizard-buttons">
+                    <button class="modal-btn" id="wizardPrev" onclick="wizardPrev()">Vorige</button>
+                    <button class="modal-btn save" id="wizardNext" onclick="wizardNext()">Volgende</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match detail modal (read-only timeline) -->
+        <div class="modal-overlay" id="matchDetailModal">
+            <div class="modal-card report-modal">
+                <button class="modal-close" onclick="closeMatchDetail()">&times;</button>
+                <div class="report-header">
+                    <span class="report-date" id="detailDate"></span>
+                    <span class="report-vs">vs <strong id="detailOpponent"></strong></span>
+                </div>
                 <div class="report-score-section">
-                    <span class="report-score-big" id="reportScore"></span>
-                    <span class="report-result" id="reportResult"></span>
+                    <span class="report-score-big" id="detailScore"></span>
+                    <span class="report-result" id="detailResult"></span>
                 </div>
-
-                <div class="report-section">
-                    <h3>Doelpuntenmakers</h3>
-                    <div id="reportScorersList"></div>
-                </div>
-
-                <div class="report-section">
-                    <h3>Diensten deze wedstrijd</h3>
-                    <div id="reportDienstenList"></div>
-                </div>
-
-                <div class="modal-buttons">
-                    <button class="modal-btn save" onclick="saveMatchReport()">Opslaan</button>
-                </div>
+                <div class="timeline-section" id="detailTimeline"></div>
+                <div class="detail-diensten" id="detailDiensten"></div>
             </div>
         </div>
 
@@ -285,7 +331,34 @@
 
     </main>
 
+    <!-- Bottom navigatie -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <button class="tab nav-item active" data-tab="wedstrijd">
+                <i data-lucide="calendar"></i>
+                <span>Wedstrijd</span>
+            </button>
+            <button class="tab nav-item" data-tab="uitslagen">
+                <i data-lucide="flag"></i>
+                <span>Uitslagen</span>
+            </button>
+            <button class="tab nav-item" data-tab="ranglijst">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Ranglijst</span>
+            </button>
+            <button class="tab nav-item" data-tab="diensten">
+                <i data-lucide="clipboard-list"></i>
+                <span>Diensten</span>
+            </button>
+            <button class="tab nav-item admin-tab" data-tab="selectie" id="selectieTab" style="display:none">
+                <i data-lucide="users"></i>
+                <span>Selectie</span>
+            </button>
+        </div>
+    </nav>
+
     <script src="api.js"></script>
     <script src="app.js"></script>
+    <script>lucide.createIcons();</script>
 </body>
 </html>

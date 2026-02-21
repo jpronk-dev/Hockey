@@ -6,14 +6,17 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f2f2f2;
+    background: #0d1520;
+    background:
+        radial-gradient(ellipse 130% 40% at 50% -2%, rgba(240, 195, 40, 0.18) 0%, transparent 65%),
+        #0d1520;
     min-height: 100vh;
-    color: #333;
+    color: #e8edf2;
 }
 
 /* ========== HEADER ========== */
 .top-header {
-    background: #2d2d2d;
+    background: transparent;
     padding: 16px 20px;
     display: flex;
     align-items: center;
@@ -22,28 +25,30 @@ body {
 
 .logo {
     height: 32px;
+    filter: brightness(0) invert(1);
 }
 
 .admin-btn {
     width: 40px;
     height: 40px;
     border: none;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.08);
     border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: #e8edf2;
     transition: background 0.2s;
 }
 
 .admin-btn:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.14);
 }
 
 .admin-btn.logged-in {
-    background: #4caf50;
+    background: rgba(240, 195, 40, 0.2);
+    color: #f0c328;
 }
 
 /* ========== LOGIN OVERLAY ========== */
@@ -51,7 +56,7 @@ body {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.6);
     z-index: 100;
     align-items: center;
     justify-content: center;
@@ -63,14 +68,15 @@ body {
 }
 
 .login-card {
-    background: #fff;
-    border-radius: 16px;
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 20px;
     padding: 30px 24px;
     width: 100%;
     max-width: 340px;
     text-align: center;
     position: relative;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
 }
 
 .login-close {
@@ -80,12 +86,12 @@ body {
     border: none;
     background: none;
     font-size: 24px;
-    color: #ccc;
+    color: #4a6080;
     cursor: pointer;
 }
 
 .login-close:hover {
-    color: #666;
+    color: #7a9ab8;
 }
 
 .login-icon {
@@ -95,13 +101,13 @@ body {
 .login-title {
     font-size: 20px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #ffffff;
     margin-bottom: 4px;
 }
 
 .login-subtitle {
     font-size: 13px;
-    color: #999;
+    color: #4a6080;
     margin-bottom: 24px;
 }
 
@@ -112,18 +118,19 @@ body {
 .pin-input {
     width: 160px;
     padding: 14px;
-    border: 2px solid #e0e0e0;
+    border: 1.5px solid rgba(255,255,255,0.1);
     border-radius: 12px;
     font-size: 24px;
     text-align: center;
     letter-spacing: 12px;
-    color: #333;
+    color: #ffffff;
+    background: #1a2736;
     outline: none;
     transition: border-color 0.2s;
 }
 
 .pin-input:focus {
-    border-color: #2d2d2d;
+    border-color: #f0c328;
 }
 
 .pin-input.error {
@@ -154,83 +161,116 @@ body {
     padding: 14px;
     border: none;
     border-radius: 12px;
-    background: #2d2d2d;
-    color: #fff;
+    background: #f0c328;
+    color: #0d1520;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .login-submit:hover {
-    background: #444;
+    background: #f5cf50;
 }
 
-/* ========== TAB NAVIGATIE ========== */
-.tab-nav {
-    background: #fff;
-    display: flex;
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+/* ========== BOTTOM NAVIGATIE — LIQUID GLASS ========== */
+.bottom-nav {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    width: calc(100% - 32px);
+    max-width: 500px;
 }
 
-.tab-nav::-webkit-scrollbar {
-    display: none;
-}
-
-.tab-nav .tab {
-    flex: 0 0 auto;
-    padding: 14px 16px;
-    border: none;
-    background: none;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #999;
-    cursor: pointer;
+.bottom-nav-inner {
     position: relative;
-    transition: color 0.2s;
+    background: rgba(28, 32, 40, 0.92);
+    backdrop-filter: blur(40px) saturate(160%);
+    -webkit-backdrop-filter: blur(40px) saturate(160%);
+    border-radius: 32px;
+    padding: 8px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 16px 48px rgba(0, 0, 0, 0.6),
+        0 4px 16px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+/* Subtiele specular shimmer bovenin */
+.bottom-nav-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        transparent 100%
+    );
+    border-radius: 32px 32px 0 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.nav-item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    border-radius: 22px;
+    transition: all 0.22s ease;
+    min-width: 0;
+    font-family: inherit;
     white-space: nowrap;
 }
 
-.tab-nav .tab.active {
-    color: #333;
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.8;
 }
 
-.tab-nav .tab.admin-tab {
+.nav-item span {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+}
+
+/* Actief item — donkere afgeronde achtergrond + accentkleur */
+.nav-item.active {
+    color: #f0c328;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.admin-tab {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.nav-item.admin-tab.active {
     color: #4caf50;
-}
-
-.tab-nav .tab.admin-tab.active {
-    color: #4caf50;
-}
-
-.tab-nav .tab.admin-tab.active::after {
-    background: #4caf50;
-}
-
-.tab-nav .tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 20%;
-    right: 20%;
-    height: 3px;
-    background: #333;
-    border-radius: 3px 3px 0 0;
+    background: rgba(76, 175, 80, 0.12);
 }
 
 /* ========== CONTAINER ========== */
 .container {
     max-width: 500px;
     margin: 0 auto;
-    padding: 0 16px 100px;
+    padding: 0 16px 110px;
 }
 
 /* ========== TAB CONTENT ========== */
@@ -245,23 +285,24 @@ body {
 .section-title {
     font-size: 20px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #ffffff;
     padding: 20px 0 16px;
 }
 
 /* ========== WEDSTRIJD CARD ========== */
 .match-card {
-    background: #fff;
-    border-radius: 14px;
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
     padding: 20px;
     margin-top: 16px;
     margin-bottom: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     transition: box-shadow 0.2s;
 }
 
 body.admin-mode .match-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
 }
 
 /* Empty state */
@@ -272,20 +313,20 @@ body.admin-mode .match-card:hover {
 }
 
 .match-empty svg {
-    color: #ccc;
+    color: #2a3d55;
     margin-bottom: 12px;
 }
 
 .match-empty p {
     font-size: 15px;
     font-weight: 600;
-    color: #666;
+    color: #4a6080;
     margin-bottom: 4px;
 }
 
 .match-empty span {
     font-size: 12px;
-    color: #aaa;
+    color: #2a3d55;
     display: none;
 }
 
@@ -297,7 +338,7 @@ body.admin-mode .match-empty span {
     text-align: center;
     font-size: 13px;
     font-weight: 600;
-    color: #666;
+    color: #4a6080;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 2px;
@@ -307,8 +348,8 @@ body.admin-mode .match-empty span {
     display: inline-block;
     font-size: 13px;
     font-weight: 600;
-    color: #555;
-    background: #f0f0f0;
+    color: #7a9ab8;
+    background: rgba(255,255,255,0.06);
     padding: 2px 12px;
     border-radius: 12px;
     margin: 4px auto 16px;
@@ -348,19 +389,19 @@ body.admin-mode .match-empty span {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: #e8e8e8;
+    background: rgba(255,255,255,0.07);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 20px;
     font-weight: 700;
-    color: #bbb;
+    color: #3d5570;
 }
 
 .team-name {
     font-size: 12px;
     font-weight: 600;
-    color: #333;
+    color: #c8d8e8;
     text-align: center;
     line-height: 1.2;
 }
@@ -368,7 +409,7 @@ body.admin-mode .match-empty span {
 .match-vs {
     font-size: 14px;
     font-weight: 700;
-    color: #ccc;
+    color: #2a3d55;
     text-transform: uppercase;
 }
 
@@ -377,7 +418,7 @@ body.admin-mode .match-empty span {
     justify-content: center;
     gap: 24px;
     padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid rgba(255,255,255,0.06);
 }
 
 .match-info-item {
@@ -385,20 +426,39 @@ body.admin-mode .match-empty span {
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: #666;
+    color: #4a6080;
 }
 
 .match-info-item svg {
-    color: #999;
+    color: #3d5570;
 }
 
 .match-info-item strong {
-    color: #333;
+    color: #c8d8e8;
+}
+
+.match-finish-btn {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    background: #f0c328;
+    color: #0d1520;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.match-finish-btn:active {
+    background: #f5cf50;
 }
 
 /* ========== OPSTELLING - VELD ========== */
 .field {
-    background: #e8e4df;
+    background: #1a2e1a;
     border-radius: 8px;
     position: relative;
     aspect-ratio: 10/14;
@@ -408,7 +468,7 @@ body.admin-mode .match-empty span {
 .field-lines {
     position: absolute;
     inset: 12px;
-    border: 2px solid rgba(0, 0, 0, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.12);
     border-radius: 2px;
 }
 
@@ -418,7 +478,7 @@ body.admin-mode .match-empty span {
     left: 0;
     right: 0;
     height: 2px;
-    background: rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.12);
 }
 
 /* Doelen */
@@ -428,7 +488,7 @@ body.admin-mode .match-empty span {
     height: 4%;
     left: 50%;
     transform: translateX(-50%);
-    border: 2px solid rgba(0, 0, 0, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.12);
 }
 
 .goal-top {
@@ -450,7 +510,7 @@ body.admin-mode .match-empty span {
     aspect-ratio: 2 / 1;
     left: 50%;
     transform: translateX(-50%);
-    border: 2px solid rgba(0, 0, 0, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.12);
 }
 
 .penalty-top {
@@ -507,16 +567,16 @@ body.admin-mode .match-empty span {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #ccc;
+    background: #1a2736;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 13px;
-    color: #666;
+    color: #7a9ab8;
     overflow: hidden;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .player-avatar img {
@@ -526,30 +586,30 @@ body.admin-mode .match-empty span {
 }
 
 .player-avatar.captain {
-    border-color: #ffd700;
+    border-color: #f0c328;
 }
 
 .player-label {
     display: flex;
     align-items: center;
     gap: 3px;
-    background: #fff;
+    background: rgba(13, 21, 32, 0.85);
     padding: 3px 7px;
     border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
     max-width: 80px;
 }
 
 .player-number {
     font-size: 10px;
     font-weight: 700;
-    color: #e63946;
+    color: #f0c328;
 }
 
 .player-name {
     font-size: 10px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: #e8edf2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -558,14 +618,15 @@ body.admin-mode .match-empty span {
 /* Wissels */
 .substitutes {
     margin-top: 16px;
-    background: #fff;
-    border-radius: 10px;
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
     padding: 14px;
 }
 
 .substitutes h3 {
     font-size: 12px;
-    color: #999;
+    color: #3d5570;
     margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -582,7 +643,7 @@ body.admin-mode .match-empty span {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #f5f5f5;
+    background: rgba(255,255,255,0.06);
     padding: 5px 10px;
     border-radius: 18px;
 }
@@ -591,13 +652,13 @@ body.admin-mode .match-empty span {
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: #ddd;
+    background: #1a2736;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 9px;
-    color: #666;
+    color: #7a9ab8;
     overflow: hidden;
 }
 
@@ -616,12 +677,12 @@ body.admin-mode .match-empty span {
 .sub-number {
     font-size: 10px;
     font-weight: 700;
-    color: #e63946;
+    color: #f0c328;
 }
 
 .sub-name {
     font-size: 11px;
-    color: #333;
+    color: #c8d8e8;
     font-weight: 500;
 }
 
@@ -630,7 +691,7 @@ body.admin-mode .match-empty span {
     display: flex;
     gap: 0;
     padding: 3px;
-    background: #e8e8e8;
+    background: rgba(255,255,255,0.06);
     border-radius: 10px;
     margin-top: 16px;
     margin-bottom: 16px;
@@ -644,15 +705,15 @@ body.admin-mode .match-empty span {
     border-radius: 8px;
     font-size: 14px;
     cursor: pointer;
-    color: #666;
+    color: #4a6080;
     font-weight: 600;
     transition: all 0.2s;
 }
 
 .segment-control .segment.active {
-    background: #fff;
-    color: #333;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    background: #1f2d40;
+    color: #f0c328;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 /* ========== RANGLIJST ========== */
@@ -686,16 +747,16 @@ body.admin-mode .match-empty span {
     width: 58px;
     height: 58px;
     border-radius: 50%;
-    background: #fff;
+    background: #1a2736;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
     font-weight: bold;
-    color: #666;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    color: #7a9ab8;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
     margin-bottom: 8px;
-    border: 4px solid #e0e0e0;
+    border: 4px solid rgba(255,255,255,0.1);
     overflow: hidden;
 }
 
@@ -713,7 +774,7 @@ body.admin-mode .match-empty span {
     width: 28px;
     height: 28px;
     margin-bottom: 6px;
-    color: #ffd700;
+    color: #f0c328;
     animation: crownBounce 0.6s ease-out 0.4s both;
 }
 
@@ -728,20 +789,18 @@ body.admin-mode .match-empty span {
     height: 74px;
     font-size: 1.5rem;
     border-width: 5px;
-    border-color: #ffd700;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-color: #f0c328;
+    box-shadow: 0 0 20px rgba(240, 195, 40, 0.3);
 }
 
 .podium-place.second .avatar {
     border-width: 4px;
-    border-color: #c0c0c0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-color: #8899aa;
 }
 
 .podium-place.third .avatar {
     border-width: 4px;
-    border-color: #cd7f32;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-color: #7a5530;
 }
 
 .podium-block {
@@ -753,52 +812,53 @@ body.admin-mode .match-empty span {
     font-size: 1.6rem;
     font-weight: bold;
     color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .podium-place.first .podium-block {
     height: 80px;
     font-size: 2rem;
-    background: linear-gradient(135deg, #f5d020, #f5ab20, #ffd700);
+    background: linear-gradient(135deg, #f5d020, #f0c328, #d4a820);
 }
 
 .podium-place.second .podium-block {
     height: 58px;
-    background: linear-gradient(135deg, #d4d4d4, #a8a8a8, #c0c0c0);
+    background: linear-gradient(135deg, #4a5a6a, #3a4a5a, #4a5a6a);
 }
 
 .podium-place.third .podium-block {
     height: 40px;
-    background: linear-gradient(135deg, #e8a050, #b87333, #cd7f32);
+    background: linear-gradient(135deg, #6a4020, #4a2a10, #6a4020);
 }
 
 .podium-name {
     font-weight: 700;
-    color: #333;
+    color: #c8d8e8;
     margin-top: 6px;
     font-size: 0.88rem;
     text-align: center;
 }
 
 .podium-stat {
-    color: #777;
+    color: #4a6080;
     font-size: 0.8rem;
     font-weight: 500;
 }
 
 /* Leaderboard lijst */
 .leaderboard-list {
-    background: #fff;
-    border-radius: 12px;
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
     padding: 4px 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
 .list-item {
     display: flex;
     align-items: center;
     padding: 10px 16px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .list-item:last-child {
@@ -809,19 +869,19 @@ body.admin-mode .match-empty span {
     width: 26px;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #bbb;
+    color: #2a3d55;
 }
 
 .list-avatar {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: #e8e8e8;
+    background: #1a2736;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    color: #666;
+    color: #7a9ab8;
     margin-right: 10px;
     font-size: 0.8rem;
     overflow: hidden;
@@ -841,7 +901,7 @@ body.admin-mode .match-empty span {
 
 .list-name {
     font-weight: 600;
-    color: #333;
+    color: #e8edf2;
     font-size: 0.9rem;
     white-space: nowrap;
     overflow: hidden;
@@ -849,14 +909,14 @@ body.admin-mode .match-empty span {
 }
 
 .list-name .captain {
-    color: #ffd700;
+    color: #f0c328;
     font-weight: normal;
     font-size: 0.8em;
 }
 
 .list-stat {
     font-weight: 700;
-    color: #333;
+    color: #e8edf2;
     font-size: 1rem;
 }
 
@@ -874,7 +934,7 @@ body.admin-mode .match-empty span {
 
 .report-date {
     font-size: 12px;
-    color: #999;
+    color: #4a6080;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -882,26 +942,26 @@ body.admin-mode .match-empty span {
 .report-vs {
     display: block;
     font-size: 14px;
-    color: #666;
+    color: #7a9ab8;
     margin-top: 4px;
 }
 
 .report-vs strong {
-    color: #333;
+    color: #e8edf2;
 }
 
 .report-score-section {
     text-align: center;
     padding: 16px 0;
-    border-top: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
     margin-bottom: 20px;
 }
 
 .report-score-big {
     font-size: 32px;
     font-weight: 700;
-    color: #333;
+    color: #ffffff;
     display: block;
 }
 
@@ -915,17 +975,17 @@ body.admin-mode .match-empty span {
 }
 
 .report-result.win {
-    background: #e8f5e9;
+    background: rgba(76, 175, 80, 0.15);
     color: #4caf50;
 }
 
 .report-result.loss {
-    background: #ffebee;
+    background: rgba(230, 57, 70, 0.15);
     color: #e63946;
 }
 
 .report-result.draw {
-    background: #fff3e0;
+    background: rgba(255, 152, 0, 0.15);
     color: #ff9800;
 }
 
@@ -936,7 +996,7 @@ body.admin-mode .match-empty span {
 .report-section h3 {
     font-size: 13px;
     font-weight: 600;
-    color: #333;
+    color: #c8d8e8;
     margin-bottom: 12px;
 }
 
@@ -950,20 +1010,20 @@ body.admin-mode .match-empty span {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #f5f5f5;
+    background: rgba(255,255,255,0.05);
     padding: 8px 10px;
     border-radius: 8px;
     width: calc(50% - 4px);
 }
 
 .report-player-item.active {
-    background: #e8f5e9;
+    background: rgba(76, 175, 80, 0.12);
 }
 
 .report-player-name {
     font-size: 12px;
     font-weight: 500;
-    color: #333;
+    color: #c8d8e8;
 }
 
 .report-player-controls {
@@ -986,13 +1046,13 @@ body.admin-mode .match-empty span {
 }
 
 .report-btn.minus {
-    background: #e0e0e0;
-    color: #666;
+    background: rgba(255,255,255,0.08);
+    color: #7a9ab8;
 }
 
 .report-btn.plus {
-    background: #2d2d2d;
-    color: #fff;
+    background: #f0c328;
+    color: #0d1520;
 }
 
 .report-player-count {
@@ -1000,44 +1060,532 @@ body.admin-mode .match-empty span {
     font-weight: 700;
     min-width: 16px;
     text-align: center;
+    color: #e8edf2;
 }
 
 .report-total {
     margin-top: 12px;
     font-size: 12px;
-    color: #666;
+    color: #4a6080;
     text-align: right;
 }
 
 .report-total strong {
-    color: #333;
+    color: #c8d8e8;
 }
 
 .report-player-chip {
     padding: 8px 14px;
-    background: #f5f5f5;
+    background: rgba(255,255,255,0.06);
     border-radius: 20px;
     font-size: 12px;
     font-weight: 500;
-    color: #666;
+    color: #7a9ab8;
     cursor: pointer;
     transition: all 0.15s;
 }
 
 .report-player-chip:hover {
-    background: #e8e8e8;
+    background: rgba(255,255,255,0.1);
 }
 
 .report-player-chip.active {
-    background: #2d2d2d;
-    color: #fff;
+    background: #f0c328;
+    color: #0d1520;
 }
 
 .report-empty {
     font-size: 13px;
-    color: #999;
+    color: #3d5570;
     text-align: center;
     padding: 12px;
+}
+
+/* ========== UITSLAGEN TAB ========== */
+.uitslagen-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.uitslag-card {
+    background: #151f2e;
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: background 0.15s;
+}
+
+.uitslag-card:active {
+    background: #1a2736;
+}
+
+.uitslag-card.no-result {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.uitslag-card.no-result.clickable {
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.uitslag-date-col {
+    font-size: 12px;
+    font-weight: 600;
+    color: #3d5570;
+    min-width: 46px;
+    text-align: left;
+    flex-shrink: 0;
+}
+
+.uitslag-teams {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.uitslag-team-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.uitslag-team-logo {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 3px;
+}
+
+.uitslag-team-logo-placeholder {
+    width: 22px;
+    height: 22px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #3d5570;
+    flex-shrink: 0;
+}
+
+.uitslag-team-name {
+    flex: 1;
+    font-size: 13px;
+    color: #4a6080;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uitslag-team-name.ons {
+    font-weight: 600;
+    color: #e8edf2;
+}
+
+.uitslag-team-score {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e8edf2;
+    min-width: 18px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.uitslag-badge {
+    font-size: 12px;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.uitslag-badge.win {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.uitslag-badge.loss {
+    background: rgba(230, 57, 70, 0.2);
+    color: #e63946;
+}
+
+.uitslag-badge.draw {
+    background: rgba(255, 152, 0, 0.2);
+    color: #ff9800;
+}
+
+.uitslag-badge.none {
+    background: rgba(255,255,255,0.06);
+    color: #3d5570;
+}
+
+/* ========== RESULT INPUT MODAL ========== */
+.result-score-input {
+    margin-bottom: 20px;
+}
+
+.score-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.score-inputs input {
+    width: 56px;
+    height: 48px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    background: #1a2736;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.score-inputs input:focus {
+    border-color: #f0c328;
+}
+
+.score-dash {
+    font-size: 24px;
+    font-weight: 700;
+    color: #3d5570;
+}
+
+.result-goals-section {
+    margin-bottom: 20px;
+}
+
+.result-goals-section > label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c8d8e8;
+    margin-bottom: 10px;
+}
+
+.goal-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.goal-minute {
+    width: 48px;
+    height: 36px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    background: #1a2736;
+    color: #e8edf2;
+    flex-shrink: 0;
+}
+
+.goal-scorer,
+.goal-assist {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    font-size: 13px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    background: #1a2736;
+    color: #e8edf2;
+    padding: 0 6px;
+}
+
+.goal-remove {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(230, 57, 70, 0.15);
+    color: #e63946;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-goal-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: 8px;
+    background: none;
+    color: #4a6080;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.15s;
+}
+
+.add-goal-btn:hover {
+    background: rgba(255,255,255,0.04);
+}
+
+/* ========== TIMELINE ========== */
+.timeline-section {
+    padding: 8px 0;
+}
+
+.timeline-empty {
+    font-size: 13px;
+    color: #3d5570;
+    text-align: center;
+    padding: 16px;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 28px;
+    margin-left: 8px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.08);
+}
+
+.timeline-event {
+    position: relative;
+    padding: 12px 0;
+}
+
+.timeline-event:first-child {
+    padding-top: 4px;
+}
+
+.timeline-event:last-child {
+    padding-bottom: 4px;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -22px;
+    top: 14px;
+    width: 12px;
+    height: 12px;
+    background: #151f2e;
+    border-radius: 50%;
+    border: 2.5px solid #f0c328;
+}
+
+.timeline-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    background: #f0c328;
+    border-radius: 50%;
+}
+
+.timeline-content {
+    padding-left: 8px;
+}
+
+.timeline-scorer {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e8edf2;
+    line-height: 1.3;
+}
+
+.timeline-assist {
+    font-size: 13px;
+    color: #4a6080;
+    margin-top: 2px;
+}
+
+/* ========== WIZARD ========== */
+.wizard-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 16px 0 20px;
+}
+
+.wizard-step {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    color: #3d5570;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.wizard-step.active {
+    background: #f0c328;
+    color: #0d1520;
+}
+
+.wizard-step.done {
+    background: #4caf50;
+    color: #fff;
+}
+
+.wizard-line {
+    width: 40px;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+
+.wizard-panel {
+    display: none;
+}
+
+.wizard-panel.active {
+    display: block;
+}
+
+.wizard-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e8edf2;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.wizard-subtitle {
+    font-size: 13px;
+    color: #4a6080;
+    text-align: center;
+    margin: -8px 0 14px;
+}
+
+.wizard-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.wizard-buttons .modal-btn {
+    flex: 1;
+}
+
+/* Score team display */
+.score-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 50px;
+}
+
+.score-team-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.score-team-label {
+    font-size: 10px;
+    color: #4a6080;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+    text-align: center;
+}
+
+/* Diensten chips */
+.diensten-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dienst-chip {
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #7a9ab8;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.dienst-chip:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.dienst-chip.active {
+    background: rgba(240, 195, 40, 0.15);
+    color: #f0c328;
+    border-color: rgba(240, 195, 40, 0.3);
+}
+
+/* Detail diensten in read-only modal */
+.detail-diensten-section {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 16px;
+    margin-top: 8px;
+}
+
+.detail-diensten-section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #c8d8e8;
+    margin-bottom: 10px;
+}
+
+.detail-diensten-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.detail-dienst-tag {
+    padding: 5px 12px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 14px;
+    font-size: 12px;
+    color: #7a9ab8;
 }
 
 /* ========== DIENSTEN ========== */
@@ -1057,18 +1605,18 @@ body.admin-mode .match-empty span {
     gap: 5px;
     padding: 6px 12px;
     border: none;
-    background: #fff;
+    background: rgba(255,255,255,0.07);
     border-radius: 8px;
     font-size: 12px;
     font-weight: 500;
-    color: #666;
+    color: #7a9ab8;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    box-shadow: none;
     transition: all 0.2s;
 }
 
 .sort-btn:hover {
-    background: #eee;
+    background: rgba(255,255,255,0.11);
 }
 
 .sort-icon {
@@ -1082,16 +1630,17 @@ body.admin-mode .match-empty span {
 }
 
 .diensten-list {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
 .dienst-row {
     display: flex;
     align-items: center;
     padding: 12px 14px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .dienst-row:last-child {
@@ -1102,7 +1651,7 @@ body.admin-mode .match-empty span {
     width: 24px;
     font-size: 13px;
     font-weight: 600;
-    color: #bbb;
+    color: #2a3d55;
     flex-shrink: 0;
 }
 
@@ -1110,13 +1659,13 @@ body.admin-mode .match-empty span {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #e8e8e8;
+    background: #1a2736;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 11px;
-    color: #666;
+    color: #7a9ab8;
     overflow: hidden;
     flex-shrink: 0;
     margin-right: 10px;
@@ -1132,7 +1681,7 @@ body.admin-mode .match-empty span {
     flex: 1;
     font-weight: 600;
     font-size: 13px;
-    color: #333;
+    color: #e8edf2;
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -1142,7 +1691,7 @@ body.admin-mode .match-empty span {
 .dienst-total {
     font-size: 14px;
     font-weight: 700;
-    color: #2d2d2d;
+    color: #f0c328;
     min-width: 24px;
     text-align: right;
     margin-left: 6px;
@@ -1159,23 +1708,24 @@ body.admin-mode .match-empty span {
     align-items: center;
     gap: 10px;
     padding: 14px 16px;
-    background: #fff;
-    border-radius: 10px;
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
     text-decoration: none;
-    color: #333;
+    color: #c8d8e8;
     font-weight: 500;
     font-size: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     transition: background 0.2s;
 }
 
 .dienst-link:hover {
-    background: #f5f5f5;
+    background: #1a2736;
 }
 
 .dienst-link-icon {
     font-size: 18px;
-    color: #999;
+    color: #4a6080;
 }
 
 /* ========== SELECTIE LIJST ========== */
@@ -1188,8 +1738,8 @@ body.admin-mode .match-empty span {
 .add-player-btn {
     padding: 8px 14px;
     border: none;
-    background: #4caf50;
-    color: #fff;
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
@@ -1198,26 +1748,27 @@ body.admin-mode .match-empty span {
 }
 
 .add-player-btn:hover {
-    background: #43a047;
+    background: rgba(76, 175, 80, 0.25);
 }
 
 .selectie-list {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
 .selectie-row {
     display: flex;
     align-items: center;
     padding: 12px 14px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     cursor: pointer;
     transition: background 0.15s;
 }
 
 .selectie-row:hover {
-    background: #f9f9f9;
+    background: rgba(255,255,255,0.03);
 }
 
 .selectie-row:last-child {
@@ -1228,7 +1779,7 @@ body.admin-mode .match-empty span {
     width: 32px;
     font-size: 14px;
     font-weight: 700;
-    color: #2d2d2d;
+    color: #f0c328;
     flex-shrink: 0;
 }
 
@@ -1236,13 +1787,13 @@ body.admin-mode .match-empty span {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: #e8e8e8;
+    background: #1a2736;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 12px;
-    color: #666;
+    color: #7a9ab8;
     overflow: hidden;
     flex-shrink: 0;
     margin-right: 12px;
@@ -1258,22 +1809,22 @@ body.admin-mode .match-empty span {
     flex: 1;
     font-weight: 500;
     font-size: 15px;
-    color: #333;
+    color: #e8edf2;
 }
 
 .selectie-name .captain {
-    color: #ffd700;
+    color: #f0c328;
     font-size: 0.8em;
     font-weight: normal;
 }
 
 .selectie-edit {
-    color: #bbb;
+    color: #2a3d55;
     flex-shrink: 0;
 }
 
 .selectie-row:hover .selectie-edit {
-    color: #666;
+    color: #7a9ab8;
 }
 
 /* ========== PLAYER MODAL ========== */
@@ -1281,7 +1832,7 @@ body.admin-mode .match-empty span {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.65);
     z-index: 100;
     align-items: center;
     justify-content: center;
@@ -1293,13 +1844,14 @@ body.admin-mode .match-empty span {
 }
 
 .modal-card {
-    background: #fff;
-    border-radius: 16px;
+    background: #151f2e;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 20px;
     padding: 24px;
     width: 100%;
     max-width: 340px;
     position: relative;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
 }
 
 .modal-close {
@@ -1309,18 +1861,18 @@ body.admin-mode .match-empty span {
     border: none;
     background: none;
     font-size: 24px;
-    color: #ccc;
+    color: #3d5570;
     cursor: pointer;
 }
 
 .modal-close:hover {
-    color: #666;
+    color: #7a9ab8;
 }
 
 .modal-title {
     font-size: 18px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #ffffff;
     margin-bottom: 20px;
 }
 
@@ -1332,7 +1884,7 @@ body.admin-mode .match-empty span {
     display: block;
     font-size: 12px;
     font-weight: 600;
-    color: #666;
+    color: #4a6080;
     margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1341,16 +1893,17 @@ body.admin-mode .match-empty span {
 .modal-field input {
     width: 100%;
     padding: 12px;
-    border: 2px solid #e0e0e0;
+    border: 1.5px solid rgba(255,255,255,0.1);
     border-radius: 10px;
     font-size: 15px;
-    color: #333;
+    color: #e8edf2;
+    background: #1a2736;
     outline: none;
     transition: border-color 0.2s;
 }
 
 .modal-field input:focus {
-    border-color: #2d2d2d;
+    border-color: #f0c328;
 }
 
 .modal-buttons {
@@ -1371,21 +1924,21 @@ body.admin-mode .match-empty span {
 }
 
 .modal-btn.save {
-    background: #2d2d2d;
-    color: #fff;
+    background: #f0c328;
+    color: #0d1520;
 }
 
 .modal-btn.save:hover {
-    background: #444;
+    background: #f5cf50;
 }
 
 .modal-btn.delete {
-    background: #fee;
+    background: rgba(230, 57, 70, 0.12);
     color: #e63946;
 }
 
 .modal-btn.delete:hover {
-    background: #fdd;
+    background: rgba(230, 57, 70, 0.2);
 }
 
 /* ========== ADMIN EDIT KNOPPEN ========== */
@@ -1412,22 +1965,22 @@ body.admin-mode .match-empty span {
 }
 
 .edit-btn.minus {
-    background: #f0f0f0;
-    color: #999;
+    background: rgba(255,255,255,0.07);
+    color: #4a6080;
 }
 
 .edit-btn.minus:hover {
-    background: #fee;
+    background: rgba(230, 57, 70, 0.15);
     color: #e63946;
 }
 
 .edit-btn.plus {
-    background: #2d2d2d;
-    color: #fff;
+    background: #f0c328;
+    color: #0d1520;
 }
 
 .edit-btn.plus:hover {
-    background: #444;
+    background: #f5cf50;
 }
 
 /* Podium edit knoppen */
@@ -1441,7 +1994,7 @@ body.admin-mode .match-empty span {
 /* Lege state */
 .empty {
     text-align: center;
-    color: #bbb;
+    color: #2a3d55;
     padding: 30px 20px;
     font-size: 14px;
 }
@@ -1476,27 +2029,27 @@ body.admin-mode .sub-player[data-player-id] {
 
 .drag-ghost .player-avatar,
 .drag-ghost .sub-avatar {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .drag-ghost-sub {
     flex-direction: row;
     gap: 6px;
-    background: #f5f5f5;
+    background: #1a2736;
     padding: 5px 10px;
     border-radius: 18px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* Drop zone highlighting during drag */
 body.drag-active .player {
-    outline: 2px dashed rgba(0, 0, 0, 0.15);
+    outline: 2px dashed rgba(240, 195, 40, 0.3);
     outline-offset: 4px;
     border-radius: 8px;
 }
 
 body.drag-active .substitutes {
-    outline: 2px dashed rgba(0, 0, 0, 0.15);
+    outline: 2px dashed rgba(240, 195, 40, 0.3);
     outline-offset: 2px;
 }
 
@@ -1505,8 +2058,8 @@ body.drag-active .substitutes {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px dashed rgba(0, 0, 0, 0.2);
-    background: rgba(255, 255, 255, 0.3);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 body.admin-mode .player-empty {
@@ -1527,7 +2080,6 @@ body.admin-mode .sub-player[data-player-id] {
 
 /* ========== RESPONSIVE: KLEINE TELEFOONS ========== */
 @media (max-width: 374px) {
-    /* Veldspelers */
     .player {
         min-width: 56px;
     }
@@ -1557,7 +2109,6 @@ body.admin-mode .sub-player[data-player-id] {
         padding: 16px 4px;
     }
 
-    /* Podium */
     .podium-place {
         width: 80px;
     }
@@ -1595,27 +2146,22 @@ body.admin-mode .sub-player[data-player-id] {
         font-size: 0.72rem;
     }
 
-    /* Tab navigatie */
     .tab-nav .tab {
         padding: 12px 12px;
         font-size: 11px;
     }
 
-    /* Container */
     .container {
         padding: 0 10px 80px;
     }
-
 }
 
 /* ========== RESPONSIVE: TABLETS ========== */
 @media (min-width: 768px) {
-    /* Container */
     .container {
         max-width: 700px;
     }
 
-    /* Podium */
     .podium {
         gap: 16px;
         padding: 28px 0 36px;
@@ -1653,7 +2199,6 @@ body.admin-mode .sub-player[data-player-id] {
         font-size: 0.95rem;
     }
 
-    /* Match card */
     .match-card {
         padding: 28px;
     }
@@ -1672,7 +2217,6 @@ body.admin-mode .sub-player[data-player-id] {
         height: 64px;
     }
 
-    /* Modals */
     .modal-card {
         max-width: 400px;
     }
@@ -1681,7 +2225,6 @@ body.admin-mode .sub-player[data-player-id] {
         max-width: 380px;
     }
 
-    /* Leaderboard */
     .list-item {
         padding: 12px 20px;
     }
@@ -1689,12 +2232,10 @@ body.admin-mode .sub-player[data-player-id] {
 
 /* ========== RESPONSIVE: GROTE SCHERMEN ========== */
 @media (min-width: 1024px) {
-    /* Container */
     .container {
         max-width: 800px;
     }
 
-    /* Tab navigatie gecentreerd */
     .tab-nav {
         justify-content: center;
     }
